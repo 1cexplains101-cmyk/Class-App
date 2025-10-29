@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ISA Interactive Dashboard v5.7 (Final Polish)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* DEFAULT THEME - These are changed by the Settings app */
+      --background-main: linear-gradient(120deg,#2596be 10%, #683b9a 70%, #ff5eae 100%);
+      --taskbar-bg: rgba(34, 37, 60, 0.7);
+      --taskbar-blur: 10px;
+    }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%; min-height: 100vh; overflow: hidden;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--background-main);
+      background-image: var(--background-image, var(--background-main));
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transition: background .5s, background-image .5s;
+      user-select: none;
+    }
+    body::before { /* Animated bokeh galaxy background */
+      content: ""; position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 20% 25%, #43e5f5dd 0, #352b7faa 60%, transparent 100%),
+                  radial-gradient(ellipse at 80% 70%, #ff7fe1cc 0, #232c77aa 60%, transparent 100%),
+                  linear-gradient(135deg, #caeaff22 0, #6532b855 100%);
+      opacity: var(--background-image-opacity, 0.42); /* Dims if custom BG is set */
+      filter: blur(10px) brightness(1.14) saturate(1.2);
+      animation: bgFloat 14s infinite alternate;
+    }
+    @keyframes bgFloat {
+      0% { filter: blur(10px) brightness(1.12) saturate(1.1); transform: scale(1); }
+      100% { filter: blur(18px) brightness(1.2) saturate(1.3); transform: scale(1.02); }
+    }
+    
+    /* --- Desktop Icons --- */
+    #desktop-icons {
+      position: absolute;
+      top: 60px; /* Lowered position */
+      left: 20px;
+      display: flex; flex-direction: column;
+      gap: 20px;
+      z-index: 50;
+    }
+    .desktop-icon {
+      display: flex; flex-direction: column;
+      align-items: center;
+      width: 80px;
+      cursor: pointer;
+    }
+    .desktop-icon .icon-bg {
+      height: 48px; width: 48px; border-radius: 12px;
+      box-shadow: 0 2px 8px #00000044, 0 0 1px #ffffffaa;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2em; color: #fff;
+      transition: transform .15s;
+    }
+    .desktop-icon:hover .icon-bg { transform: scale(1.1); }
+    .desktop-icon .icon-label {
+      color: #fff;
+      font-size: 0.9em;
+      text-shadow: 0 1px 3px #00000088;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    /* --- Taskbar --- */
+    .taskbar {
+      position: fixed; left: 0; bottom: 0; width: 100vw; height: 62px;
+      background: var(--taskbar-bg);
+      backdrop-filter: blur(var(--taskbar-blur));
+      -webkit-backdrop-filter: blur(var(--taskbar-blur));
+      z-index: 999; display: flex; align-items: center;
+      border-top: 1.5px solid #5ed3ff96;
+      box-shadow: 0 -2px 22px #0046ad44;
+      padding: 0 12px;
+      transition: background .5s, backdrop-filter .5s;
+    }
+    .dock-group { display: flex; }
+    .dock-icon {
+      height: 44px; width: 44px; margin: 0 10px; border-radius: 12px;
+      box-shadow: 0 2px 8px #00000044, 0 0 1px #ffffffaa;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8em; color: #fff;
+      cursor: pointer; padding: 0;
+      transition: transform .15s, box-shadow .2s;
+      flex-shrink: 0;
+    }
+    .dock-icon:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 6px 15px #00000055; }
+    .dock-icon:active { transform: scale(1.05); }
+    
+    #clock {
+      margin-left: auto; color: #fff; font-family: 'Orbitron';
+      font-size: 1.1em; padding-right: 20px;
+      text-shadow: 0 0 5px #00c3ff;
+      flex-shrink: 0;
+    }
+
+    /* --- Desktop Windows --- */
+    .window {
+      position: absolute; top: 120px; left: 160px; min-width: 350px; min-height: 220px;
+      background: rgba(40, 45, 70, 0.7);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 18px;
+      box-shadow: 0 8px 40px #1dcfff52;
+      border: 1.5px solid #47aaffaa;
+      z-index: 199;
+      transition: box-shadow .22s, border-color .22s, opacity .2s,
+                  top 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  left 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  width 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: openWindow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex; flex-direction: column;
+      max-height: calc(100vh - 80px); /* Ensure window doesn't go below taskbar */
+    }
+    
+    .window.dragging {
+      transition: none !important;
+    }
+    
+    @keyframes openWindow {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .window.active {
+      box-shadow: 0 12px 60px #57fbff55;
+      border-color: #17eaff;
+    }
+    .hidden { display: none !important; }
+
+    .window .titlebar {
+      background: linear-gradient(90deg, #2341c8ee 20%, #26ffd899 100%);
+      color: #fff; font-family: "Orbitron"; font-size: 1.1em; font-weight: 600;
+      padding: 10px 14px; border-radius: 17px 17px 0 0;
+      cursor: grab;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .window-btn-group { display: flex; }
+    .window-btn {
+      border: none; background: none; color: #fff; font-size: 1.12em;
+      cursor: pointer; margin-left: 7px; padding: 2px 4px;
+      opacity: 0.8; transition: opacity .2s;
+    }
+    .window-btn:hover { opacity: 1; }
+    .window .content {
+      padding: 15px;
+      flex-grow: 1; /* Makes content fill the space */
+      min-height: 0; /* Fix for flexbox overflow */
+      overflow: auto; /* Default overflow */
+      color: #fff;
+      display: flex; flex-direction: column;
+    }
+    
+    /* --- FIX: Settings Scrollbar --- */
+    #win-settings .content {
+        overflow-y: auto;
+    }
+
+    .window iframe {
+      border: none; width: 100%; height: 100%; border-radius: 8px;
+      background: #000; /* BG for iframes that are slow to load */
+      flex-grow: 1; /* Make iframe fill space */
+    }
+
+    /* Resize Handle */
+    .resize-handle {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 15px; height: 15px;
+      cursor: se-resize;
+      opacity: 0.5;
+      background: linear-gradient(135deg, transparent 50%, #17eaff 50%);
+      border-bottom-right-radius: 17px;
+    }
+    
+    /* Maximized State */
+    .window.maximized {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: calc(100vh - 62px) !important; /* Full height minus taskbar */
+      border-radius: 0;
+      transition: top 0.2s, left 0.2s, width 0.2s, height 0.2s; /* Smooth maximize */
+      max-height: calc(100vh - 62px);
+    }
+    .window.maximized .titlebar { border-radius: 0; }
+    .window.maximized .resize-handle { display: none; }
+    .window.maximized .content { height: 100%; } /* Ensure content fills */
+
+    /* --- App Specific Styles --- */
+    .icon-schedule { background: linear-gradient(120deg,#4ee8ec 40%,#7d3ae5 100%); }
+    .icon-grammar { background: linear-gradient(120deg,#ff5eae 35%,#5ef8fa 100%); }
+    .icon-google { background: linear-gradient(120deg,#fff 30%,#4285F4 100%); color: #2d3d8b; }
+    .icon-game { background: linear-gradient(120deg,#f9d423 10%,#f83600 100%); }
+    .icon-settings { background: linear-gradient(120deg,#9e9e9e 10%,#616161 100%); }
+    .icon-terminal { background: linear-gradient(120deg,#333 10%,#000 100%); color: #0f0; }
+    .icon-weather { background: linear-gradient(120deg,#2980b9 10%,#f1c40f 100%); }
+    .icon-calculator { background: linear-gradient(120deg,#7f8c8d 10%,#34495e 100%); }
+    .icon-chat { background: linear-gradient(120deg,#4CAF50 10%, #8BC34A 100%); } /* New Chat Icon Style */
+
+
+    /* Shared Button Style */
+    .app-btn {
+      border: 2px solid #ffffffaa; background: #ffffff11; color: #fff;
+      padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: background .2s;
+      font-family: 'Montserrat';
+    }
+    .app-btn:hover { background: #ffffff22; }
+    .app-btn:active { background: #ffffff33; }
+    .app-btn.primary { background: #5a8fff; border-color: #7aa1ff; }
+    .app-btn.primary:hover { background: #6b9cff; }
+    .app-btn.ai-btn { background: linear-gradient(90deg, #8e44ad, #c0392b); border:none; }
+    
+    /* Shared Input Style */
+    .app-input {
+      background: #00000022; color: #fff; border: 1px solid #ffffff88;
+      padding: 8px; border-radius: 6px; font-family: 'Montserrat'; font-size: 1em;
+      flex-grow: 1;
+    }
+    
+    /* --- Tabbed Interface (for Schedule) --- */
+    .tab-bar {
+      display: flex;
+      border-bottom: 2px solid #ffffff44;
+      margin-bottom: 15px;
+    }
+    .tab-btn {
+      background: none; border: none; color: #ffffffaa;
+      font-family: 'Orbitron'; font-size: 1.1em;
+      padding: 10px 15px; cursor: pointer;
+    }
+    .tab-btn.active {
+      color: #fff;
+      border-bottom: 3px solid #17eaff;
+    }
+    .tab-content {
+      display: flex; flex-direction: column; gap: 15px;
+    }
+    .tab-content.hidden { display: none; }
+
+
+    /* Schedule Table */
+    .schedule-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85em; }
+    .schedule-table th, .schedule-table td { padding: 6px; text-align: left; border-bottom: 1px solid #ffffff22; white-space:nowrap; }
+    .schedule-table th { background: #ffffff1a; vertical-align: top; }
+    .schedule-table td:first-child { font-weight: bold; }
+    .schedule-table .break { background: #0000001a; }
+    .schedule-table .lunch { background: #00000033; }
+    .schedule-table small { opacity: 0.7; font-size: 0.9em; }
+
+    /* Settings App */
+    .settings-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .setting-item { background: #0000001a; padding: 15px; border-radius: 8px; }
+    .setting-item h4 { margin: 0 0 10px 0; font-family: 'Orbitron'; }
+    .setting-item .options { display: flex; flex-wrap: wrap; gap: 10px; }
+    .setting-item .input-group { display: flex; gap: 10px; }
+    .app-visibility-list {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .app-visibility-list label {
+      display: flex; align-items: center; gap: 8px;
+      background: #ffffff11; padding: 8px; border-radius: 6px;
+    }
+    
+    /* Wallpaper Gallery */
+    .wallpaper-gallery details {
+      background: #0000001a;
+      border-radius: 6px;
+      margin-bottom: 5px;
+    }
+    .wallpaper-gallery summary {
+      font-weight: bold;
+      font-family: 'Orbitron';
+      padding: 10px;
+      cursor: pointer;
+    }
+    .wallpaper-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      padding: 0 10px 10px 10px;
+    }
+    .wallpaper-thumb {
+      width: 100%;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity .2s, transform .2s;
+    }
+    .wallpaper-thumb:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    
+    /* Terminal App */
+    .terminal-content { height: 350px; background: #0a0a0f; border-radius: 8px; padding: 10px; overflow-y: auto; }
+    .terminal-output { color: #0f0; font-family: monospace; white-space: pre-wrap; }
+    .terminal-line { display: flex; }
+    .terminal-prompt { color: #0f0; margin-right: 5px; }
+    .terminal-input {
+      background: none; border: none; color: #0f0; font-family: monospace;
+      outline: none; flex-grow: 1;
+    }
+    
+    /* Google App */
+    .google-controls { display: flex; margin-bottom: 10px; }
+    .app-disclaimer { opacity: 0.8; font-size: 0.9em; flex-shrink: 0; margin-bottom: 10px; }
+
+    
+    /* My Schedule App */
+    .schedule-helper { display: flex; flex-direction: column; gap: 15px; }
+    .schedule-helper .controls { display: flex; gap: 10px; align-items: center; }
+    .schedule-helper select {
+      background: #00000022; color: #fff; border: 1px solid #ffffff88;
+      padding: 8px; border-radius: 6px; font-family: 'Montserrat'; font-size: 1em;
+    }
+    .schedule-helper .result-box {
+      background: #00000022; padding: 15px; border-radius: 8px;
+    }
+    .schedule-helper .result-box h4 { margin: 0 0 10px 0; font-family: 'Orbitron'; }
+    .schedule-helper .result-box p { margin: 4px 0; }
+    .schedule-helper .ai-overview {
+      font-style: italic; opacity: 0.9;
+      border-top: 1px dashed #ffffff44; padding-top: 10px; margin-top: 10px;
+    }
+    
+    /* Weather App */
+    .weather-info { text-align: center; padding: 20px; }
+    .weather-info .icon { font-size: 4em; }
+    .weather-info .temp { font-size: 2.5em; font-weight: bold; margin: 10px 0; }
+    .weather-info .condition { font-size: 1.2em; }
+    .weather-info .location { opacity: 0.7; }
+    
+    /* Calculator App */
+    .calculator { display: flex; flex-direction: column; height: 100%; }
+    .calc-display {
+      background: #00000033; border-radius: 8px;
+      padding: 10px; text-align: right; font-size: 2em;
+      font-family: 'Orbitron'; margin-bottom: 10px;
+      min-height: 40px; word-wrap: break-word;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      flex-grow: 1;
+    }
+    .calc-btn {
+      background: #ffffff1a; color: #fff; border: none;
+      border-radius: 8px; font-size: 1.5em;
+      cursor: pointer; transition: background .2s;
+    }
+    .calc-btn:hover { background: #ffffff2a; }
+    .calc-btn:active { background: #ffffff3a; }
+    .calc-btn.op { background: #ff9f0a88; }
+    .calc-btn.op:hover { background: #ff9f0a99; }
+    .calc-btn.clear { background: #f05c5c88; }
+    .calc-btn.clear:hover { background: #f05c5c99; }
+    .calc-btn.equals { background: #5a8fff88; grid-column: span 2; }
+    .calc-btn.equals:hover { background: #5a8fff99; }
+    .calc-btn.sci { background: #607d8b88; }
+    .calc-btn.sci:hover { background: #607d8b99; }
+    
+    /* Scientific Calculator Mode */
+    .calculator.sci-mode .calc-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+    .calc-btn.sci-op {
+      font-size: 1.2em;
+      background: #607d8b88;
+    }
+    .calc-btn.sci-op:hover { background: #607d8b99; }
+    .sci-row { display: none; }
+    .calculator.sci-mode .sci-row { display: contents; }
+    .calculator.sci-mode .calc-btn.equals { grid-column: span 3; }
+    .calculator.sci-mode .calc-btn.clear { grid-column: 1 / 3; }
+    .calculator.sci-mode .calc-btn.toggle-sci { grid-column: 3 / 6; }
+
+
+    @media(max-width:950px) {
+      .window:not(.maximized) { min-width: 95vw; left: 2.5vw !important; top: 5vh !important; }
+      .dock-icon { margin: 0 5px; }
+      #clock { font-size: 0.9em; padding-right: 10px; }
+      #desktop-icons { top: 40px; left: 10px; gap: 15px; } /* Adjust for mobile */
+      .desktop-icon { width: 60px; }
+      .desktop-icon .icon-bg { height: 40px; width: 40px; font-size: 1.5em; }
+      .desktop-icon .icon-label { font-size: 0.8em; }
+      .wallpaper-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+      .wallpaper-thumb { height: 40px; }
+    }
+  </style>
+</head>
+<body onload="loadSettings(); initClock(); initGlobalListeners();">
+
+  <div id="desktop-icons"></div>
+  <div id="windows"></div>
+  
+  <div class="taskbar">
+    <div class="dock-group" id="dock-container">
+      <!-- Dock icons will be rendered here by JavaScript -->
+    </div>
+    <div id="clock"></div>
+  </div>
+
+  <script>
+    // --- SCHEDULE DATA (for new app) ---
+    // Times are in 24-hour format (HH:MM)
+    const scheduleData = {
+      1: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "FA" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "LA" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "A&L" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "MS" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "SDP" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "QR" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ],
+      2: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "LA" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "QR" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "BS" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "SDP" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "PE" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "DA" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ],
+      3: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "PE" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "MS" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "S&T" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "S&T" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "ST&I" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "ST&I" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ],
+      4: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "SIL" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "LA" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "QR" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "BS" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "Sem" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "Sem" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ],
+      5: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "SDP" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "SIL" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "S&T" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "LA" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "CP" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "CP" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ],
+      6: [ // Corrected Day 6
+        { start: "07:45", end: "08:00", subject: "A&CP" },
+        { start: "08:00", end: "09:00", subject: "PE" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "QR" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "SIL" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "S&T" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "LA" }, // FIX applied
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "Assem" }, // FIX applied
+        { start: "15:10", end: "15:20", subject: "A&D" }
+      ],
+      7: [
+        { start: "07:45", end: "08:00", subject: "Assembly & C.Ed" },
+        { start: "08:00", end: "09:00", subject: "SIL" },
+        { start: "09:00", end: "09:05", subject: "Break 1" },
+        { start: "09:05", end: "10:05", subject: "FA" },
+        { start: "10:05", end: "10:15", subject: "Break 2" },
+        { start: "10:15", end: "11:15", subject: "DA" },
+        { start: "11:15", end: "11:20", subject: "Break 3" },
+        { start: "11:20", end: "12:20", subject: "QR" },
+        { start: "12:20", end: "13:00", subject: "Lunch" },
+        { start: "13:00", end: "14:00", subject: "PLCs" },
+        { start: "14:00", end: "14:10", subject: "Break 4" },
+        { start: "14:10", end: "15:10", subject: "PLCs" },
+        { start: "15:10", end: "15:20", subject: "Dismissal/Cleanup" }
+      ]
+    };
+    
+    // --- WEATHER CODES (for new app) ---
+    const weatherCodeToEmoji = {
+      0: "☀️", 1: "🌤️", 2: "⛅️", 3: "☁️", 45: "🌫️", 48: "🌫️",
+      51: " drizzle", 53: " drizzle", 55: " drizzle", 56: " freezing drizzle", 57: " freezing drizzle",
+      61: "🌧️", 63: "🌧️", 65: "🌧️", 66: "🌧️", 67: "🌧️",
+      71: "🌨️", 73: "🌨️", 75: "🌨️", 77: "🌨️",
+      80: "🌦️", 81: "🌦️", 82: "🌦️", 85: "🌨️", 86: "🌨️",
+      95: "🌩️", 96: "🌩️", 99: "🌩️",
+    };
+    
+    // --- NEW: WALLPAPER GALLERY DATA ---
+    const wallpaperData = {
+      "Nature": [
+        { name: "Misty Mountains", url: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=80" },
+        { name: "Green Field", url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&q=80" },
+        { name: "Forest Path", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=80" },
+        { name: "Beach", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" }
+      ],
+      "Space": [
+        { name: "Galaxy", url: "https://images.unsplash.com/photo-1538370965046-79c0d6907d47?w=1920&q=80" },
+        { name: "Nebula", url: "https://images.unsplash.com/photo-1516245834210-c4c1427873ab?w=1920&q=80" },
+        { name: "Earth", url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80" },
+        { name: "Stars", url: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920&q=80" }
+      ],
+      "Gaming": [
+        { name: "Neon Setup", url: "https://images.unsplash.com/photo-1587831990711-236b2f75b816?w=1920&q=80" },
+        { name: "Retro Arcade", url: "https://images.unsplash.com/photo-1511882150382-4c1abd3e0048?w=1920&q=80" },
+        { name: "Controller", url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920&q=80" },
+        { name: "PC Build", url: "https://images.unsplash.com/photo-1598057076824-8f92f545f36b?w=1920&q=80" }
+      ],
+      "Pets": [
+        { name: "Golden Retriever", url: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1920&q=80" },
+        { name: "Cat", url: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=1920&q=80" },
+        { name: "Kittens", url: "https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?w=1920&q=80" },
+        { name: "Hedgehog", url: "https://images.unsplash.com/photo-1554522804-0e3f46f25412?w=1920&q=80" }
+      ],
+      "Vibes (Abstract)": [
+        { name: "Lo-fi Desk", url: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1920&q=80" },
+        { name: "Vaporwave", url: "https://images.unsplash.com/photo-1571992523311-23a70135d966?w=1920&q=80" },
+        { name: "Liquid Swirl", url: "https://images.unsplash.com/photo-1604079628040-94301bb21b91?w=1920&q=80" },
+        { name: "Pixel Sky", url: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=1920&q=80" }
+      ]
+    };
+
+
+    // --- APP WINDOWS DATA ---
+    // This object now defines *all* possible apps
+    const apps = {
+      schedule: {
+        title: "2C Schedule",
+        icon: "📅",
+        style: "icon-schedule",
+        defaultOnDock: true,
+        content: `
+          <div class="tab-bar">
+            <button id="tab-btn-status" class="tab-btn active" onclick="switchTab('schedule', 'status')">Live Status</button>
+            <button id="tab-btn-full" class="tab-btn" onclick="switchTab('schedule', 'full')">Full Schedule</button>
+          </div>
+          
+          <div id="tab-content-status" class="tab-content schedule-helper">
+            <div class="controls">
+              <label for="day-select">What day is it?</label>
+              <select id="day-select" class="app-btn">
+                <option value="">-- Select Day --</option>
+                <option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option>
+                <option value="4">Day 4</option><option value="5">Day 5</option><option value="6">Day 6</option>
+                <option value="7">Day 7</option>
+              </select>
+              <button class="app-btn primary" onclick="findCurrentClass()">Check</button>
+            </div>
+            <div class="result-box">
+              <h4>Current Status</h4>
+              <p><strong>Now:</strong> <span id="current-class">--</span></p>
+              <p><strong>Ends at:</strong> <span id="ends-at">--</span></p>
+              <p><strong>Next:</strong> <span id="next-class">--</span></p>
+            </div>
+            <button class="app-btn ai-btn" onclick="getAiOverview()">✨ Get AI Overview for Today</button>
+            <div class="result-box">
+              <h4>AI Overview</h4>
+              <p class="ai-overview" id="ai-overview-text">Select a day and click the button above.</p>
+            </div>
+          </div>
+          
+          <div id="tab-content-full" class="tab-content hidden" style="overflow-x: auto;">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Assembly & C.Ed<br><small>7:45-8:00</small></th>
+                  <th>Session 1<br><small>8:00-9:00</small></th>
+                  <th>Break 1<br><small>9:00-9:05</small></th>
+                  <th>Session 2<br><small>9:05-10:05</small></th>
+                  <th>Break 2<br><small>10:05-10:15</small></th>
+                  <th>Session 3<br><small>10:15-11:15</small></th>
+                  <th>Break 3<br><small>11:15-11:20</small></th>
+                  <th>Session 4<br><small>11:20-12:20</small></th>
+                  <th>Lunch<br><small>12:20-13:00</small></th>
+                  <th>Session 5<br><small>13:00-14:00</small></th>
+                  <th>Break 4<br><small>14:00-14:10</small></th>
+                  <th>Session 6<br><small>14:10-15:10</small></th>
+                  <th>Dismissal/Cleanup<br><small>15:10-15:20</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Day 1</td><td>A&CP</td><td>FA</td><td class="break"></td><td>LA</td><td class="break"></td><td>A&L</td><td class="break"></td><td>MS</td><td class="lunch"></td><td>SDP</td><td class="break"></td><td>QR</td><td>A&D</td></tr>
+                <tr><td>Day 2</td><td>A&CP</td><td>LA</td><td class="break"></td><td>QR</td><td class="break"></td><td>BS</td><td class="break"></td><td>SDP</td><td class="lunch"></td><td>PE</td><td class="break"></td><td>DA</td><td>A&D</td></tr>
+                <tr><td>Day 3</td><td>A&CP</td><td>PE</td><td class="break"></td><td>MS</td><td class="break"></td><td>S&T</td><td class="break"></td><td>S&T</td><td class="lunch"></td><td>ST&I</td><td class="break"></td><td>ST&I</td><td>A&D</td></tr>
+                <tr><td>Day 4</td><td>A&CP</td><td>SIL</td><td class="break"></td><td>LA</td><td class="break"></td><td>QR</td><td class="break"></td><td>BS</td><td class="lunch"></td><td>Sem</td><td class="break"></td><td>Sem</td><td>A&D</td></tr>
+                <tr><td>Day 5</td><td>A&CP</td><td>SDP</td><td class="break"></td><td>SIL</td><td class="break"></td><td>S&T</td><td class="break"></td><td>LA</td><td class="lunch"></td><td>CP</td><td class="break"></td><td>CP</td><td>A&D</td></tr>
+                <tr><td>Day 6</td><td>A&CP</td><td>PE</td><td class="break"></td><td>QR</td><td class="break"></td><td>SIL</td><td class="break"></td><td>S&T</td><td class="lunch"></td><td>LA</td><td class="break"></td><td>Assem</td><td>A&D</td></tr>
+                <tr><td>Day 7</td><td>A&CP</td><td>SIL</td><td class="break"></td><td>FA</td><td class="break"></td><td>DA</td><td class="break"></td><td>QR</td><td class="lunch"></td><td>PLCs</td><td class="break"></td><td>PLCs</td><td>A&D</td></tr>
+              </tbody>
+            </table>
+          </div>`
+      },
+      weather: {
+        title: "Weather",
+        icon: "☀️",
+        style: "icon-weather",
+        defaultOnDock: true,
+        content: `<div class="weather-info">
+          <div class="icon" id="weather-icon">--</div>
+          <div class="temp" id="weather-temp">--°C</div>
+          <div class="condition" id="weather-condition">Loading...</div>
+          <div class="location" id="weather-location">Belize City, Belize</div>
+        </div>`
+      },
+      calculator: {
+        title: "Calculator",
+        icon: "🧮",
+        style: "icon-calculator",
+        defaultOnDock: true,
+        content: `<div class="calculator" id="calculator-app">
+          <div class="calc-display" id="calc-display">0</div>
+          <div class="calc-grid">
+            <!-- Scientific Row (Hidden by default) -->
+            <span class="sci-row">
+              <button class="calc-btn sci-op" onclick="handleCalcInput('sin')">sin</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('cos')">cos</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('tan')">tan</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('log')">log</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('ln')">ln</button>
+              
+              <button class="calc-btn sci-op" onclick="handleCalcInput('sqrt')">√</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('^')">^</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('(')">(</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput(')')">)</button>
+              <button class="calc-btn sci-op" onclick="handleCalcInput('PI')">π</button>
+            </span>
+          
+            <button class="calc-btn clear" onclick="handleCalcInput('C')">C</button>
+            <button class="calc-btn op" onclick="handleCalcInput('/')">/</button>
+            <button class="calc-btn op" onclick="handleCalcInput('*')">*</button>
+            <button class="calc-btn op" onclick="handleCalcInput('-')">-</button>
+            <button class="calc-btn toggle-sci" onclick="toggleCalculatorMode()">Sci</button>
+            
+            <button class="calc-btn" onclick="handleCalcInput('7')">7</button>
+            <button class="calc-btn" onclick="handleCalcInput('8')">8</button>
+            <button class="calc-btn" onclick="handleCalcInput('9')">9</button>
+            <button class="calc-btn op" onclick="handleCalcInput('+')" style="grid-row: span 2;">+</button>
+            
+            <button class="calc-btn" onclick="handleCalcInput('4')">4</button>
+            <button class="calc-btn" onclick="handleCalcInput('5')">5</button>
+            <button class="calc-btn" onclick="handleCalcInput('6')">6</button>
+            
+            <button class="calc-btn" onclick="handleCalcInput('1')">1</button>
+            <button class="calc-btn" onclick="handleCalcInput('2')">2</button>
+            <button class="calc-btn" onclick="handleCalcInput('3')">3</button>
+            <button class="calc-btn" onclick="handleCalcInput('.')">.</button>
+            
+            <button class="calc-btn equals" onclick="handleCalcInput('=')">=</button>
+            <button class="calc-btn" onclick="handleCalcInput('0')">0</button>
+          </div>
+        </div>`
+      },
+      grammar: {
+        title: "ISA Grammar",
+        icon: "🔤",
+        style: "icon-grammar",
+        defaultOnDock: true,
+        content: `<iframe src="https://silverdragon841.github.io/ISAGrammar/" allow="fullscreen"></iframe>`
+      },
+      google: {
+        title: "Google",
+        icon: "🌎",
+        style: "icon-google",
+        defaultOnDock: true,
+        content: `<div class="google-controls">
+            <button class="app-btn" onclick="document.getElementById('google-iframe-win-google').src = 'https://www.google.com/webhp?igu=1'">🏠 Home</button>
+          </div>
+          <p class="app-disclaimer">(Note: If blank, Google is blocking embedding. This is a security feature of their site.)</p>
+          <iframe id="google-iframe-win-google" src="https://www.google.com/webhp?igu=1" allow="fullscreen"></iframe>`
+      },
+      game: {
+        title: "Smash Karts",
+        icon: "🎮",
+        style: "icon-game",
+        defaultOnDock: true,
+        content: `<p class="app-disclaimer">(Note: If blank, their site is blocking embedding).</p>
+                  <iframe src="https://smashkarts.io/" allow="fullscreen"></iframe>`
+      },
+       groupChat: { // New Group Chat App
+        title: "Group Chat",
+        icon: "💬",
+        style: "icon-chat",
+        defaultOnDock: true,
+        content: `<iframe src="https://glitchy-m.github.io/verbose-octo-engine/groupchat" allow="fullscreen"></iframe>`
+      },
+      terminal: {
+        title: "Terminal",
+        icon: "ᐳ_",
+        style: "icon-terminal",
+        defaultOnDock: false,
+        content: `<div class="terminal-content">
+          <div class="terminal-output">Welcome to Web-Terminal! Type 'help' for commands.</div>
+          <div class="terminal-line">
+            <span class="terminal-prompt">user@isa:~$</span>
+            <input class="terminal-input" onkeydown="handleTerminalInput(event)">
+          </div>
+        </div>`
+      },
+      settings: {
+        title: "Settings",
+        icon: "⚙️",
+        style: "icon-settings",
+        defaultOnDock: true,
+        content: `<div class="settings-grid">
+          
+          <div class="setting-item">
+            <h4>Wallpaper</h4>
+            <div class="options">
+              <button class="app-btn" onclick="applySetting('bg', 'default')">Default (ISA)</button>
+              <button class="app-btn" onclick="applySetting('bg', 'ocean')">Deep Ocean</button>
+              <button class="app-btn" onclick="applySetting('bg', 'sunset')">Sunset</button>
+              <button class="app-btn" onclick="applySetting('bg', 'dark')">Mono Dark</button>
+            </div>
+            <div class="input-group" style="margin-top:15px;">
+              <input type="text" id="custom-bg-input" class="app-input" placeholder="Paste image URL here...">
+              <button class="app-btn primary" onclick="applySetting('bg-custom')">Apply</button>
+            </div>
+            <h4 style="margin-top: 20px;">Wallpaper Gallery</h4>
+            <div class="wallpaper-gallery" id="wallpaper-gallery-container">
+              <!-- Gallery will be rendered here -->
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <h4>Taskbar Style</h4>
+            <div class="options">
+              <button class="app-btn" onclick="applySetting('taskbar', 'default')">Default (Blur)</button>
+              <button class="app-btn" onclick="applySetting('taskbar', 'solid')">Solid</button>
+              <button class="app-btn" onclick="applySetting('taskbar', 'clear')">Clear</button>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <h4>Customize Dock Apps</h4>
+            <div class="app-visibility-list" id="settings-dock-list">
+              <!-- Checkboxes will be rendered here -->
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <h4>Customize Desktop Icons</h4>
+            <div class="app-visibility-list" id="settings-desktop-list">
+              <!-- Checkboxes will be rendered here -->
+            </div>
+          </div>
+          
+          <!-- NEW: Startup Apps -->
+          <div class="setting-item">
+            <h4>Customize Startup Apps</h4>
+            <div class="app-visibility-list" id="settings-startup-list">
+              <!-- Checkboxes will be rendered here -->
+            </div>
+          </div>
+          
+        </div>`
+      }
+    };
+
+    // --- STATE MANAGEMENT ---
+    let windowStates = JSON.parse(localStorage.getItem('desktop-windows')) || {};
+    let desktopSettings = JSON.parse(localStorage.getItem('desktop-settings')) || {};
+
+    function saveWindowStates() {
+      localStorage.setItem('desktop-windows', JSON.stringify(windowStates));
+    }
+    function saveWindowState(id, rect) {
+      windowStates[id] = { ...windowStates[id], ...rect };
+      saveWindowStates();
+    }
+    function saveDesktopSettings() {
+      localStorage.setItem('desktop-settings', JSON.stringify(desktopSettings));
+    }
+    
+    // --- App Visibility & Rendering (Robust Version) ---
+    
+    function initializeSettings() {
+      let needsSave = false;
+      // Ensure base objects exist
+      if (!desktopSettings.dock) desktopSettings.dock = {};
+      if (!desktopSettings.desktop) desktopSettings.desktop = {};
+      if (!desktopSettings.startup) desktopSettings.startup = {}; // NEW
+
+      // Loop through all *current* apps and add them if they're missing from settings
+      Object.keys(apps).forEach(appName => {
+        if (desktopSettings.dock[appName] === undefined) {
+          desktopSettings.dock[appName] = apps[appName].defaultOnDock || false;
+          needsSave = true;
+        }
+        if (desktopSettings.desktop[appName] === undefined) {
+          desktopSettings.desktop[appName] = false; // Never on desktop by default
+          needsSave = true;
+        }
+        if (desktopSettings.startup[appName] === undefined) { // NEW
+            desktopSettings.startup[appName] = false; // Don't startup by default
+            needsSave = true;
+        }
+      });
+
+      // Cleanup: Remove settings for apps that no longer exist
+      Object.keys(desktopSettings.dock).forEach(appName => { if (!apps[appName]) { delete desktopSettings.dock[appName]; needsSave = true; } });
+      Object.keys(desktopSettings.desktop).forEach(appName => { if (!apps[appName]) { delete desktopSettings.desktop[appName]; needsSave = true; } });
+      Object.keys(desktopSettings.startup).forEach(appName => { if (!apps[appName]) { delete desktopSettings.startup[appName]; needsSave = true; } });
+
+
+      if (needsSave) saveDesktopSettings();
+    }
+    
+    function renderDock() {
+      const container = document.getElementById('dock-container');
+      container.innerHTML = ''; // Clear existing
+      
+      Object.keys(desktopSettings.dock).forEach(appName => {
+        if (desktopSettings.dock[appName]) {
+          const app = apps[appName];
+          if (!app) return; // Failsafe for old settings
+          container.innerHTML += `
+            <div class="dock-icon ${app.style}" title="${app.title}" onclick="openApp('${appName}')">
+              ${app.icon}
+            </div>`;
+        }
+      });
+    }
+    
+    function renderDesktopIcons() {
+      const container = document.getElementById('desktop-icons');
+      container.innerHTML = ''; // Clear existing
+      
+      Object.keys(desktopSettings.desktop).forEach(appName => {
+        if (desktopSettings.desktop[appName]) {
+          const app = apps[appName];
+          if (!app) return; // Failsafe for old settings
+          container.innerHTML += `
+            <div class="desktop-icon" onclick="openApp('${appName}')" draggable="true" ondragstart="event.dataTransfer.setData('text/plain',null)">
+              <div class="icon-bg ${app.style}">${app.icon}</div>
+              <span class="icon-label">${app.title}</span>
+            </div>`;
+        }
+      });
+    }
+    
+    function populateSettingsCheckboxes() {
+      const dockList = document.getElementById('settings-dock-list');
+      const desktopList = document.getElementById('settings-desktop-list');
+      const startupList = document.getElementById('settings-startup-list'); // NEW
+      
+      if (!dockList || !desktopList || !startupList) return; // Settings window isn't open
+      
+      dockList.innerHTML = '';
+      desktopList.innerHTML = '';
+      startupList.innerHTML = ''; // NEW
+      
+      Object.keys(apps).forEach(appName => {
+        const app = apps[appName];
+        
+        // Dock setting
+        const dockChecked = desktopSettings.dock[appName] ? 'checked' : '';
+        dockList.innerHTML += `
+          <label>
+            <input type="checkbox" ${dockChecked} onchange="updateAppVisibility('${appName}', 'dock', this.checked)">
+            ${app.icon} ${app.title}
+          </label>`;
+          
+        // Desktop setting
+        const desktopChecked = desktopSettings.desktop[appName] ? 'checked' : '';
+        desktopList.innerHTML += `
+          <label>
+            <input type="checkbox" ${desktopChecked} onchange="updateAppVisibility('${appName}', 'desktop', this.checked)">
+            ${app.icon} ${app.title}
+          </label>`;
+          
+        // Startup setting (NEW)
+        const startupChecked = desktopSettings.startup[appName] ? 'checked' : '';
+        startupList.innerHTML += `
+            <label>
+                <input type="checkbox" ${startupChecked} onchange="updateAppVisibility('${appName}', 'startup', this.checked)">
+                ${app.icon} ${app.title}
+            </label>`;
+      });
+    }
+    
+    function updateAppVisibility(appName, location, isVisible) {
+      if (location === 'dock') {
+        desktopSettings.dock[appName] = isVisible;
+        renderDock();
+      } else if (location === 'desktop') {
+        desktopSettings.desktop[appName] = isVisible;
+        renderDesktopIcons();
+      } else if (location === 'startup') { // NEW
+        desktopSettings.startup[appName] = isVisible;
+      }
+      saveDesktopSettings();
+    }
+
+    
+    // --- WINDOW MANAGEMENT ---
+    
+    function openApp(name) {
+      const winId = 'win-' + name;
+      let win = document.getElementById(winId);
+      if (win) {
+        win.classList.remove('hidden');
+        updateZ(win);
+        return;
+      }
+
+      const app = apps[name];
+      win = document.createElement('div');
+      win.className = 'window';
+      win.id = winId;
+      
+      // Check for saved state or set default
+      if (windowStates[winId]) {
+        const state = windowStates[winId];
+        win.style.left = state.left;
+        win.style.top = state.top;
+        win.style.width = state.width;
+        win.style.height = state.height;
+      } else {
+        const x = Math.floor(Math.random() * (window.innerWidth - 400)) + 50;
+        const y = Math.floor(Math.random() * (window.innerHeight - 500)) + 50;
+        win.style.left = x + 'px';
+        win.style.top = y + 'px';
+      }
+
+      // --- Google Home Button FIX ---
+      let appContent = app.content;
+      if (name === 'google') {
+          appContent = app.content.replace('google-iframe-win-google', `google-iframe-${winId}`);
+      }
+
+      win.innerHTML = `
+        <div class="titlebar">
+          <span>${app.title}</span>
+          <span class="window-btn-group">
+            <button class="window-btn" title="Minimize" onclick="minimize('${name}')">🗕</button>
+            <button class="window-btn" title="Maximize" onclick="maximize('${name}')">🗖</button>
+            <button class="window-btn" title="Fullscreen" onclick="toggleFullscreen('${name}')">⛶</button>
+            <button class="window-btn" title="Close" onclick="closeWin('${name}')">🗙</button>
+          </span>
+        </div>
+        <div class="content">${appContent}</div>
+        <div class="resize-handle"></div>`;
+      
+      document.getElementById('windows').appendChild(win);
+      win.onmousedown = () => { updateZ(win); };
+      
+      updateZ(win);
+      dragInit(win);
+      resizeInit(win);
+      
+      // Auto-run for apps
+      if (name === 'terminal') initTerminal(win);
+      if (name === 'weather') fetchWeather();
+      if (name === 'calculator') {
+        const display = win.querySelector('#calc-display');
+        if (display) display.dataset.value = "0";
+      }
+      if (name === 'settings') {
+        populateSettingsCheckboxes();
+        populateWallpaperGallery();
+      }
+    }
+
+    function closeWin(name) {
+      const winId = 'win-' + name;
+      delete windowStates[winId];
+      saveWindowStates();
+      document.getElementById(winId)?.remove();
+    }
+    
+    function minimize(name) {
+      document.getElementById('win-' + name)?.classList.add('hidden');
+    }
+
+    function maximize(name) {
+      const win = document.getElementById('win-' + name);
+      if (win.classList.contains('maximized')) {
+        // Restore
+        win.classList.remove('maximized');
+        const old = win.dataset.oldRect.split(',');
+        win.style.top = old[0];
+        win.style.left = old[1];
+        win.style.width = old[2];
+        win.style.height = old[3];
+        win.dataset.oldRect = ''; // Clear dataset
+        saveWindowState(win.id, { top: old[0], left: old[1], width: old[2], height: old[3] });
+      } else {
+        // Maximize
+        win.dataset.oldRect = [win.style.top, win.style.left, win.style.width || win.offsetWidth+'px', win.style.height || win.offsetHeight+'px'].join(',');
+        win.classList.add('maximized');
+        win.style.width = ''; // Clear inline styles
+        win.style.height = '';
+        win.style.top = '';
+        win.style.left = '';
+      }
+    }
+    
+    function toggleFullscreen(name) {
+      const win = document.getElementById('win-' + name);
+      if (!document.fullscreenElement) {
+        // Try to fullscreen the window, or the iframe if one exists
+        const iframe = win.querySelector('iframe');
+        const el = iframe || win;
+        el.requestFullscreen().catch(err => {
+          alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function updateZ(win) {
+      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+      win.classList.add('active');
+      win.style.zIndex = Array.from(document.querySelectorAll('.window')).length + 100;
+    }
+
+    // --- DRAG AND RESIZE (GLOBAL LOGIC) ---
+    
+    let activeDragWindow = null;
+    let activeResizeWindow = null;
+    let offsetX, offsetY, startX, startY, startWidth, startHeight;
+
+    function dragInit(win) {
+      const title = win.querySelector('.titlebar');
+      title.onmousedown = function(e) {
+        if (e.target.classList.contains('window-btn')) return;
+        
+        win.classList.add('dragging');
+        
+        if (win.classList.contains('maximized')) {
+          // Drag-to-restore
+          const oldWidth = parseFloat(win.dataset.oldRect.split(',')[2]);
+          maximize(win.id.substring(4)); // Restore
+          offsetX = (e.clientX / window.innerWidth) * oldWidth;
+          offsetY = e.offsetY; // Grab relative to titlebar
+        } else {
+          // Normal drag
+          offsetX = e.clientX - win.offsetLeft;
+          offsetY = e.clientY - win.offsetTop;
+        }
+        
+        activeDragWindow = win;
+        activeResizeWindow = null; // Ensure only one action
+        updateZ(win);
+      };
+    }
+    
+    function resizeInit(win) {
+      const handle = win.querySelector('.resize-handle');
+      handle.onmousedown = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        win.classList.add('dragging');
+        activeResizeWindow = win;
+        activeDragWindow = null; // Ensure only one action
+        
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = win.offsetWidth;
+        startHeight = win.offsetHeight;
+        updateZ(win);
+      };
+    }
+    
+    function initGlobalListeners() {
+      document.addEventListener('mousemove', (e) => {
+        if (activeDragWindow) {
+          const win = activeDragWindow;
+          win.style.left = (e.clientX - offsetX) + "px";
+          win.style.top = (e.clientY - offsetY) + "px";
+        } else if (activeResizeWindow) {
+          const win = activeResizeWindow;
+          const newWidth = startWidth + (e.clientX - startX);
+          const newHeight = startHeight + (e.clientY - startY);
+          win.style.width = newWidth + 'px';
+          win.style.height = newHeight + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDragWindow) {
+          activeDragWindow.classList.remove('dragging');
+          saveWindowState(activeDragWindow.id, { top: activeDragWindow.style.top, left: activeDragWindow.style.left });
+          activeDragWindow = null;
+        } else if (activeResizeWindow) {
+          activeResizeWindow.classList.remove('dragging');
+          saveWindowState(activeResizeWindow.id, { width: activeResizeWindow.style.width, height: activeResizeWindow.style.height });
+          activeResizeWindow = null;
+        }
+      });
+    }
+
+    // --- SETTINGS APP ---
+    const themes = {
+      bg: {
+        'default': 'linear-gradient(120deg,#2596be 10%, #683b9a 70%, #ff5eae 100%)',
+        'ocean': 'linear-gradient(120deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+        'sunset': 'linear-gradient(120deg, #ff7e5f 0%, #feb47b 100%)',
+        'dark': 'linear-gradient(120deg, #1e1e1e 0%, #2c2c2c 100%)'
+      },
+      taskbar: {
+        'default': { bg: 'rgba(34, 37, 60, 0.7)', blur: '10px' },
+        'solid': { bg: 'rgba(34, 37, 60, 1)', blur: '0px' },
+        'clear': { bg: 'rgba(0, 0, 0, 0.1)', blur: '2px' }
+      }
+    };
+    
+    function populateWallpaperGallery() {
+      const container = document.getElementById('wallpaper-gallery-container');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      for (const [category, images] of Object.entries(wallpaperData)) {
+        let gridHtml = '';
+        images.forEach(img => {
+          gridHtml += `<img src="${img.url}" title="${img.name}" class="wallpaper-thumb" onclick="applySetting('bg-gallery', '${img.url}')">`;
+        });
+        
+        container.innerHTML += `
+          <details>
+            <summary>${category}</summary>
+            <div class="wallpaper-grid">
+              ${gridHtml}
+            </div>
+          </details>`;
+      }
+    }
+    
+    function applySetting(type, value) {
+      const root = document.documentElement;
+      if (type === 'bg') {
+        desktopSettings.wallpaper = null; // Clear custom BG
+        root.style.setProperty('--background-main', themes.bg[value]);
+        root.style.setProperty('--background-image', 'var(--background-main)');
+        root.style.setProperty('--background-image-opacity', '0.42');
+        desktopSettings.bgTheme = value;
+      }
+      if (type === 'bg-custom') {
+        const url = document.getElementById('custom-bg-input').value;
+        if (!url) return;
+        desktopSettings.wallpaper = url;
+        root.style.setProperty('--background-image', `url(${url})`);
+        root.style.setProperty('--background-image-opacity', '0.1'); // Make bokeh dimmer
+      }
+      if (type === 'bg-gallery') {
+        desktopSettings.wallpaper = value; // value is the URL from the gallery
+        root.style.setProperty('--background-image', `url(${value})`);
+        root.style.setProperty('--background-image-opacity', '0.1');
+      }
+      if (type === 'taskbar') {
+        const tbValue = themes.taskbar[value];
+        root.style.setProperty('--taskbar-bg', tbValue.bg);
+        root.style.setProperty('--taskbar-blur', tbValue.blur);
+        desktopSettings.taskbar = value;
+      }
+      saveDesktopSettings();
+    }
+    
+    function loadSettings() {
+      initializeSettings();
+      
+      const tbTheme = desktopSettings.taskbar || 'default';
+      applySetting('taskbar', tbTheme);
+      
+      // *** WALLPAPER FIX ***
+      // Load custom wallpaper first if it exists
+      if (desktopSettings.wallpaper) {
+        document.documentElement.style.setProperty('--background-image', `url(${desktopSettings.wallpaper})`);
+        document.documentElement.style.setProperty('--background-image-opacity', '0.1');
+      } else {
+        // Otherwise, load the saved theme
+        const bgTheme = desktopSettings.bgTheme || 'default';
+        applySetting('bg', bgTheme);
+      }
+      
+      // Render UI
+      renderDock();
+      renderDesktopIcons();
+      
+      // Open Startup Apps (NEW)
+      Object.keys(desktopSettings.startup).forEach(appName => {
+          if (desktopSettings.startup[appName]) {
+              // Use setTimeout to avoid opening too many windows at once on slow machines
+              setTimeout(() => openApp(appName), 100); 
+          }
+      });
+    }
+    
+    // --- TERMINAL APP ---
+    function initTerminal(win) {
+      const input = win.querySelector('.terminal-input');
+      win.addEventListener('click', () => input.focus());
+      input.focus();
+    }
+    
+    function handleTerminalInput(e) {
+      if (e.key === 'Enter') {
+        const inputEl = e.target;
+        const outputEl = inputEl.closest('.terminal-content').querySelector('.terminal-output');
+        const cmd = inputEl.value.trim().toLowerCase();
+        
+        outputEl.innerHTML += `\n<span style="color:#0af;">user@isa:~$</span> ${cmd}`;
+        
+        let response = `\n'${cmd}': command not recognized. Type 'help'.`;
+        if (cmd === 'help') {
+          response = `\nAvailable commands:\n  help    - Show this message\n  date    - Display current date and time\n  clear   - Clear the terminal screen\n  about   - Show info about this desktop`;
+        } else if (cmd === 'date') {
+          response = `\n${new Date().toLocaleString()}`;
+        } else if (cmd === 'about') {
+          response = `\nISA Interactive Dashboard v5.7 (Final Polish)\n(c) 2025 - Advanced calculator added.`;
+        } else if (cmd === 'clear') {
+          response = '';
+          outputEl.innerHTML = 'Welcome to Web-Terminal!';
+        }
+        
+        if (response) {
+          outputEl.innerHTML += response;
+        }
+        
+        inputEl.value = '';
+        outputEl.parentElement.scrollTop = outputEl.parentElement.scrollHeight; // Scroll to bottom
+      }
+    }
+    
+    // --- CLOCK ---
+    function initClock() {
+      const clockEl = document.getElementById('clock');
+      function updateTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        clockEl.textContent = time;
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+    }
+    
+    // --- APP: SCHEDULE ---
+    function switchTab(appName, tabName) {
+      const win = document.getElementById(`win-${appName}`);
+      if (!win) return;
+      
+      win.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      win.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      const content = win.querySelector(`#tab-content-${tabName}`);
+      const btn = win.querySelector(`#tab-btn-${tabName}`);
+      if (content) content.classList.remove('hidden');
+      if (btn) btn.classList.add('active');
+    }
+    
+    function findCurrentClass() {
+      const day = document.getElementById('day-select').value;
+      const currentClassEl = document.getElementById('current-class');
+      const endsAtEl = document.getElementById('ends-at');
+      const nextClassEl = document.getElementById('next-class');
+
+      if (!day) {
+        currentClassEl.textContent = "Please select a day.";
+        endsAtEl.textContent = "--";
+        nextClassEl.textContent = "--";
+        return;
+      }
+      
+      const daySchedule = scheduleData[day];
+      const now = new Date();
+      // Format current time as HH:MM (24-hour)
+      const currentTime = now.toTimeString().slice(0, 5);
+      
+      let currentClass = null;
+      let nextClass = null;
+      
+      for (let i = 0; i < daySchedule.length; i++) {
+        const event = daySchedule[i];
+        if (currentTime >= event.start && currentTime < event.end) {
+          currentClass = event;
+          nextClass = daySchedule[i + 1] || null;
+          break;
+        }
+      }
+      
+      if (currentClass) {
+        currentClassEl.textContent = currentClass.subject;
+        endsAtEl.textContent = currentClass.end;
+        nextClassEl.textContent = nextClass ? nextClass.subject : "School's Out!";
+      } else if (currentTime < daySchedule[0].start) {
+        currentClassEl.textContent = "Before School";
+        endsAtEl.textContent = daySchedule[0].start;
+        nextClassEl.textContent = daySchedule[0].subject;
+      } else {
+        currentClassEl.textContent = "School's Out!";
+        endsAtEl.textContent = "--";
+        nextClassEl.textContent = "None";
+      }
+    }
+    
+    async function getAiOverview() {
+      const day = document.getElementById('day-select').value;
+      const overviewEl = document.getElementById('ai-overview-text');
+      
+      if (!day) {
+        overviewEl.textContent = "Please select a day first.";
+        return;
+      }
+      
+      overviewEl.textContent = "Thinking... 🧠";
+      
+      const daySchedule = scheduleData[day];
+      const simpleSchedule = daySchedule.map(s => `${s.subject} (${s.start}-${s.end})`).join(', ');
+      
+      const systemPrompt = "You are a friendly and helpful student assistant. Your tone is casual and encouraging. Keep your response to one short paragraph (under 50 words).";
+      const userQuery = `Here is my school schedule for today: ${simpleSchedule}. Give me a brief, friendly overview. Mention the busiest parts and any good breaks.`;
+      const apiKey = ""; // API key is handled by the environment
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+      try {
+        const payload = {
+          contents: [{ parts: [{ text: userQuery }] }],
+          systemInstruction: {
+            parts: [{ text: systemPrompt }]
+          },
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (text) {
+          overviewEl.textContent = text;
+        } else {
+          throw new Error("No text returned from AI.");
+        }
+      } catch (error) {
+        console.error("AI Overview Error:", error);
+        overviewEl.textContent = "Sorry, I couldn't get the overview. Please try again later.";
+      }
+    }
+    
+    // --- APP: WEATHER ---
+    async function fetchWeather() {
+      // Coords for Belize City: 17.50, -88.19
+      const lat = 17.50;
+      const lon = -88.19;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+      
+      const iconEl = document.getElementById('weather-icon');
+      const tempEl = document.getElementById('weather-temp');
+      const condEl = document.getElementById('weather-condition');
+      
+      if (!iconEl) return; // Window not open
+      
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const weather = data.current_weather;
+        const emoji = weatherCodeToEmoji[weather.weathercode] || "❓";
+        
+        iconEl.textContent = emoji;
+        tempEl.textContent = `${weather.temperature}°C`;
+        condEl.textContent = weather.weathercode_description || "Clear"; // API might not send text
+        
+      } catch (error) {
+        console.error("Weather Fetch Error:", error);
+        condEl.textContent = "Could not load weather";
+        iconEl.textContent = "❌";
+      }
+    }
+    
+    // --- APP: CALCULATOR ---
+    function toggleCalculatorMode() {
+      const calc = document.getElementById('calculator-app');
+      if (calc) {
+        calc.classList.toggle('sci-mode');
+      }
+    }
+
+    function handleCalcInput(value) {
+      const display = document.getElementById('calc-display');
+      if (!display) return;
+      
+      let currentVal = display.dataset.value || "0";
+      
+      if (value === 'C') {
+        currentVal = "0";
+      } else if (value === '=') {
+        try {
+          // Replace ^ with Math.pow()
+          let expression = currentVal.replace(/\^/g, '**');
+          
+          // Replace functions
+          expression = expression.replace(/sin\(/g, 'Math.sin(');
+          expression = expression.replace(/cos\(/g, 'Math.cos(');
+          expression = expression.replace(/tan\(/g, 'Math.tan(');
+          expression = expression.replace(/log\(/g, 'Math.log10(');
+          expression = expression.replace(/ln\(/g, 'Math.log(');
+          expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+          expression = expression.replace(/PI/g, 'Math.PI');
+          
+          currentVal = eval(expression).toString();
+        } catch {
+          currentVal = "Error";
+        }
+      } else {
+        if (currentVal === "0" || currentVal === "Error") {
+          currentVal = value;
+        } else {
+          currentVal += value;
+        }
+      }
+      
+      display.dataset.value = currentVal;
+      display.textContent = currentVal;
+    }
+
+  </script>
+</body>
+</html>
+
