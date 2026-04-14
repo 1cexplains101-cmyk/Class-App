@@ -19,11 +19,11 @@
         /* Lobby */
         #lobby { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(30,27,75,0.7) 0%, rgba(3,3,8,0.9) 100%); display: flex; flex-direction: row; align-items: center; justify-content: center; z-index: 100; gap: 40px; }
         
-        #lobby-box { background: rgba(10, 10, 20, 0.85); padding: 30px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #00f2fe; text-align: center; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); width: 480px; flex-shrink: 0; max-height: 90vh; overflow-y: auto; }
+        #lobby-box { background: rgba(10, 10, 20, 0.85); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #00f2fe; text-align: center; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); width: 400px; flex-shrink: 0; max-height: 90vh; overflow-y: auto; }
         #chat-lobby-box { background: rgba(10, 10, 20, 0.85); padding: 20px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #8b5cf6; display: flex; flex-direction: column; width: 350px; height: 500px; box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); display: none; }
         
         h1 { margin: 0 0 5px 0; font-size: 2.5rem; color: #00f2fe; text-shadow: 0 0 15px #00f2fe; text-transform: uppercase; letter-spacing: 2px; }
-        .subtitle { font-size: 1rem; color: #94a3b8; margin-bottom: 20px; letter-spacing: 1px; }
+        .subtitle { font-size: 1rem; color: #94a3b8; margin-bottom: 30px; letter-spacing: 1px; }
         
         /* Scrollbar for lobby */
         ::-webkit-scrollbar { width: 8px; }
@@ -31,33 +31,14 @@
         ::-webkit-scrollbar-thumb { background: #00f2fe; border-radius: 4px; }
         
         /* Buttons & Inputs */
-        .btn { padding: 14px 24px; font-size: 16px; font-weight: 800; border: none; border-radius: 12px; background: linear-gradient(90deg, #00f2fe, #4facfe); color: #030308; cursor: pointer; transition: all 0.2s; text-shadow: 0 1px 2px rgba(255,255,255,0.5); width: 100%; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; }
+        .btn { padding: 16px 24px; font-size: 16px; font-weight: 800; border: none; border-radius: 12px; background: linear-gradient(90deg, #00f2fe, #4facfe); color: #030308; cursor: pointer; transition: all 0.2s; text-shadow: 0 1px 2px rgba(255,255,255,0.5); width: 100%; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 242, 254, 0.5); }
         .btn:active { transform: translateY(1px); }
         .btn.secondary { background: rgba(255,255,255,0.05); border: 2px solid #00f2fe; color: #00f2fe; box-shadow: none; text-shadow: none; }
         .btn.secondary:hover { background: rgba(0, 242, 254, 0.2); }
         
-        input[type="text"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #00f2fe; border-radius: 12px; box-sizing: border-box; margin-bottom: 15px; text-align: center; background: rgba(0,0,0,0.5); color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; outline: none; }
+        input[type="text"] { width: 100%; padding: 16px; font-size: 16px; border: 2px solid #00f2fe; border-radius: 12px; box-sizing: border-box; margin-bottom: 15px; text-align: center; background: rgba(0,0,0,0.5); color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; outline: none; }
         input[type="text"]:focus { border-color: #d946ef; box-shadow: 0 0 15px rgba(217,70,239,0.5); }
-
-        /* Avatar Customization */
-        .color-title { color: #00f2fe; font-weight: 800; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-align: left; border-bottom: 1px solid rgba(0,242,254,0.3); padding-bottom: 5px; }
-        
-        .color-swatches { display: flex; justify-content: flex-start; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .swatch:hover { transform: scale(1.1); }
-        .swatch.selected { border: 2px solid #fff; box-shadow: 0 0 15px currentColor; transform: scale(1.2); }
-        
-        .class-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .class-btn { background: rgba(0,0,0,0.5); border: 2px solid #334155; color: #94a3b8; padding: 8px; border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: bold; transition: 0.2s; }
-        .class-btn:hover { border-color: #00f2fe; color: #00f2fe; }
-        .class-btn.selected { border-color: #d946ef; color: #d946ef; background: rgba(217,70,239,0.1); box-shadow: 0 0 10px rgba(217,70,239,0.3); }
-
-        /* Accessory Grid */
-        .acc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
-        .acc-btn { background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; padding: 8px 0; font-size: 18px; cursor: pointer; transition: 0.2s; }
-        .acc-btn:hover { border-color: #00f2fe; transform: scale(1.05); }
-        .acc-btn.selected { background: rgba(0,242,254,0.2); border-color: #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.4); }
 
         /* Lobby Menus */
         #host-menu, #loading-menu, #preview-box { display: none; }
@@ -130,40 +111,13 @@
             <h1>CYBER OBBY</h1>
             <p class="subtitle">Multiplayer Platformer Racing</p>
             
-            <div id="setup-menu">
-                <input type="text" id="player-name" placeholder="ENTER USERNAME" maxlength="12" value="RACER">
-                
-                <p class="color-title">CHASSIS TYPE</p>
-                <div class="class-selector">
-                    <div class="class-btn selected" data-class="classic">CLASSIC</div>
-                    <div class="class-btn" data-class="heavy">HEAVY BRUTE</div>
-                    <div class="class-btn" data-class="sleek">SLEEK NINJA</div>
-                    <div class="class-btn" data-class="hover">HOVER DRONE</div>
+            <div id="main-menu">
+                <button class="btn" id="btn-create">Create a Room (Host)</button>
+                <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.2); position: relative;">
+                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 20, 1); padding: 0 10px; font-size: 14px; color: #94a3b8; font-weight: bold;">OR</span>
                 </div>
-
-                <p class="color-title">ARMOR PAINT</p>
-                <div class="color-swatches" id="swatch-container">
-                    <div class="swatch selected" style="background: #3b82f6; color: #3b82f6;" data-hex="0x3b82f6"></div>
-                    <div class="swatch" style="background: #ef4444; color: #ef4444;" data-hex="0xef4444"></div>
-                    <div class="swatch" style="background: #10b981; color: #10b981;" data-hex="0x10b981"></div>
-                    <div class="swatch" style="background: #f59e0b; color: #f59e0b;" data-hex="0xf59e0b"></div>
-                    <div class="swatch" style="background: #d946ef; color: #d946ef;" data-hex="0xd946ef"></div>
-                    <div class="swatch" style="background: #ffffff; color: #ffffff;" data-hex="0xffffff"></div>
-                </div>
-                
-                <p class="color-title">ACCESSORIES (30+ OPTIONS)</p>
-                <div class="acc-grid" id="acc-container">
-                    <!-- Populated by JS -->
-                </div>
-
-                <button class="btn" id="btn-create">Host New Race</button>
-                <div style="margin: 15px 0; border-top: 1px solid #334155; position: relative;">
-                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 20, 1); padding: 0 10px; font-size: 12px; color: #94a3b8; font-weight: bold;">OR JOIN FRIEND</span>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="join-input" placeholder="CODE" maxlength="4" style="margin-bottom: 0;">
-                    <button class="btn secondary" id="btn-join" style="margin-bottom: 0;">Join</button>
-                </div>
+                <input type="text" id="join-input" placeholder="ENTER 4-LETTER CODE" maxlength="4">
+                <button class="btn secondary" id="btn-join">Join Room</button>
             </div>
 
             <div id="host-menu">
@@ -390,39 +344,6 @@
         // =========================================================
         // 4. ACCESSORIES & AVATAR BUILDER
         // =========================================================
-        const ACC_DATA = [
-            { id: 0, icon: "🚫", name: "None", slot: "none" },
-            { id: 1, icon: "🦆", name: "Duck", slot: "head" }, { id: 2, icon: "👑", name: "Crown", slot: "head" },
-            { id: 3, icon: "🎩", name: "Top Hat", slot: "head" }, { id: 4, icon: "👼", name: "Halo", slot: "head" },
-            { id: 5, icon: "🧢", name: "Beanie", slot: "head" }, { id: 6, icon: "🎧", name: "Headphones", slot: "head" },
-            { id: 7, icon: "🐱", name: "Cat Ears", slot: "head" }, { id: 8, icon: "😈", name: "Horns", slot: "head" },
-            { id: 9, icon: "🧙", name: "Wizard", slot: "head" }, { id: 10, icon: "🌮", name: "Sombrero", slot: "head" },
-            { id: 11, icon: "👨‍🍳", name: "Chef", slot: "head" }, { id: 12, icon: "🪖", name: "Viking", slot: "head" },
-            { id: 13, icon: "🥷", name: "Ninja", slot: "head" }, { id: 14, icon: "📡", name: "Antenna", slot: "head" },
-            { id: 15, icon: "🎉", name: "Party Hat", slot: "head" }, { id: 16, icon: "🛸", name: "Mini UFO", slot: "head" },
-            { id: 17, icon: "🦸", name: "Cape", slot: "back" }, { id: 18, icon: "🪽", name: "Angel Wings", slot: "back" },
-            { id: 19, icon: "🦇", name: "Demon Wings", slot: "back" }, { id: 20, icon: "⚔️", name: "Katanas", slot: "back" },
-            { id: 21, icon: "🔋", name: "Battery", slot: "back" }, { id: 22, icon: "🐢", name: "Shell", slot: "back" },
-            { id: 23, icon: "🎒", name: "Backpack", slot: "back" }, { id: 24, icon: "🎸", name: "Guitar", slot: "back" },
-            { id: 25, icon: "🕶️", name: "3D Glass", slot: "face" }, { id: 26, icon: "🥽", name: "Cyber", slot: "face" },
-            { id: 27, icon: "🥸", name: "Stache", slot: "face" }, { id: 28, icon: "🧐", name: "Monocle", slot: "face" },
-            { id: 29, icon: "😷", name: "Gas Mask", slot: "face" }, { id: 30, icon: "🤡", name: "Clown Nose", slot: "face" }
-        ];
-
-        const accContainer = document.getElementById('acc-container');
-        if(accContainer) {
-            ACC_DATA.forEach(acc => {
-                const btn = document.createElement('button');
-                btn.className = 'acc-btn' + (acc.id === 0 ? ' selected' : '');
-                btn.innerText = acc.icon; btn.title = acc.name;
-                btn.onclick = () => {
-                    document.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected'); myAccessoryId = acc.id; updateMenuAvatar();
-                };
-                accContainer.appendChild(btn);
-            });
-        }
-
         const mkBox = (w,h,d, mat, y=0, z=0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat); m.position.set(0,y,z); m.castShadow = true; return m; };
         const mkCyl = (rt,rb,h, mat, y=0, z=0) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,12), mat); m.position.set(0,y,z); m.castShadow = true; return m; };
 
@@ -535,6 +456,7 @@
             const iceBlock = new THREE.Mesh(new THREE.BoxGeometry(4.5, 6.5, 4.5), MATS.iceCube);
             iceBlock.position.y = 2.5; iceBlock.visible = false; group.add(iceBlock);
 
+            // Add Accessory
             const accData = ACC_DATA.find(a => a.id === accId);
             if(accData && accData.slot !== 'none') {
                 const accMesh = buildAccessory(accId);
@@ -550,30 +472,8 @@
             return { group, armL, armR, legL, legR, headGrp, droneGrp, droneItem, iceBlock, nametag, color: colorHex, type, accId };
         }
 
-        const previewGrp = new THREE.Group(); scene.add(previewGrp);
-        var menuAvatar = null;
-        function updateMenuAvatar() {
-            if(menuAvatar) previewGrp.remove(menuAvatar.group);
-            const nm = document.getElementById('player-name') ? document.getElementById('player-name').value : "RACER";
-            menuAvatar = createAvatar(myAvatarColor, myAvatarClass, nm || "RACER", myAccessoryId);
-            menuAvatar.group.position.set(0, -2, 15); previewGrp.add(menuAvatar.group);
-        }
-
-        document.querySelectorAll('.swatch').forEach(s => s.addEventListener('click', (e) => {
-            document.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
-            e.target.classList.add('selected'); myAvatarColor = parseInt(e.target.getAttribute('data-hex')); updateMenuAvatar();
-        }));
-        document.querySelectorAll('.class-btn').forEach(b => b.addEventListener('click', (e) => {
-            document.querySelectorAll('.class-btn').forEach(x => x.classList.remove('selected'));
-            e.target.classList.add('selected'); myAvatarClass = e.target.getAttribute('data-class'); updateMenuAvatar();
-        }));
-        const pNameInput = document.getElementById('player-name');
-        if(pNameInput) pNameInput.addEventListener('input', updateMenuAvatar);
-        
-        updateMenuAvatar(); 
-
         // =========================================================
-        // 6. LEVEL BUILDER & 5 STAGES
+        // 5. LEVEL BUILDER & 5 STAGES
         // =========================================================
         function addPlatform(x, y, z, w, h, d, matMain, matEdge, type="normal", extra={}) {
             const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matMain);
@@ -649,7 +549,7 @@
         buildLevels();
 
         // =========================================================
-        // 7. COMBAT & ITEMS LOGIC
+        // 6. COMBAT & ITEMS LOGIC
         // =========================================================
         function rollItem() {
             const r = Math.random();
@@ -700,7 +600,7 @@
         function applyFreeze() { isFrozen = true; freezeTimer = 3000; velocity.set(0,0,0); localPlayer.iceBlock.visible = true; document.getElementById('freeze-overlay').style.display = 'block'; showFloatingText("FROZEN!", playerGrp.position, "#00ffff"); }
 
         // =========================================================
-        // 8. FIREBASE SYNC & MULTIPLAYER
+        // 7. FIREBASE SYNC & MULTIPLAYER
         // =========================================================
         var lastHandledEventTs = {};
         var roomCmdTs = 0;
@@ -794,40 +694,60 @@
         }
 
         // =========================================================
-        // 9. LOBBY UI & CHAT
+        // 8. LOBBY UI & CHAT
         // =========================================================
         async function hostRoom() {
-            const inputName = document.getElementById('player-name');
-            myName = (inputName && inputName.value) ? inputName.value : "HOST";
+            const PALETTE = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0xd946ef, 0xffffff];
+            const CLASSES = ['classic', 'heavy', 'sleek', 'hover'];
+            myName = "Player-" + Math.floor(Math.random() * 9999);
+            myAvatarColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+            myAvatarClass = CLASSES[Math.floor(Math.random() * CLASSES.length)];
+            myAccessoryId = Math.floor(Math.random() * 31);
+            
             roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
             
-            showMenu('loading-menu'); await initFirebase();
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('loading-menu').style.display = 'block';
+            await initFirebase();
+            
             isHost = true; setupMultiplayerListeners();
 
-            showMenu('host-menu');
+            document.getElementById('loading-menu').style.display = 'none';
+            document.getElementById('host-menu').style.display = 'block';
             document.getElementById('display-code').innerText = roomCode;
             document.getElementById('display-link').innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
             document.getElementById('hud-code-display').innerText = roomCode;
             document.getElementById('host-panel').style.display = 'block'; 
-            document.getElementById('chat-lobby-box').style.display = 'flex';
+            
+            enterGame();
             appendChat("System", "Room Created. Waiting for players...", "#94a3b8");
         }
 
         async function joinRoom(code) {
-            const inputName = document.getElementById('player-name');
-            myName = (inputName && inputName.value) ? inputName.value : "RACER";
+            const PALETTE = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0xd946ef, 0xffffff];
+            const CLASSES = ['classic', 'heavy', 'sleek', 'hover'];
+            myName = "Player-" + Math.floor(Math.random() * 9999);
+            myAvatarColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+            myAvatarClass = CLASSES[Math.floor(Math.random() * CLASSES.length)];
+            myAccessoryId = Math.floor(Math.random() * 31);
+            
             code = code.toUpperCase(); roomCode = code;
             
-            showMenu('loading-menu'); document.getElementById('loading-text').innerText = `JOINING ${code}...`;
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('loading-menu').style.display = 'block';
+            document.getElementById('loading-text').innerText = `JOINING ${code}...`;
+            
             await initFirebase();
             isHost = false; setupMultiplayerListeners();
 
-            showMenu('host-menu');
+            document.getElementById('loading-menu').style.display = 'none';
+            document.getElementById('host-menu').style.display = 'block';
             document.getElementById('display-code').innerText = roomCode;
             document.getElementById('display-link').innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
             document.getElementById('hud-code-display').innerText = roomCode;
-            document.getElementById('chat-lobby-box').style.display = 'flex';
-            document.getElementById('btn-start').style.display = 'none'; 
+            document.getElementById('host-panel').style.display = 'none'; 
+            
+            enterGame();
             appendChat("System", "Connected to Room! Waiting for host to start.", "#94a3b8");
         }
 
@@ -841,7 +761,8 @@
             if (inputId === 'ig-chat-input') { window.isTyping = false; document.getElementById('ig-chat-input-container').style.display = 'none'; }
         }
         
-        document.getElementById('btn-send-chat').addEventListener('click', () => sendChatFromInput('chat-input'));
+        const igChatInput = document.getElementById('ig-chat-input');
+        if(igChatInput) igChatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendChatFromInput('ig-chat-input'); });
         
         function appendChat(name, text, color) {
             const html = `<div class="chat-msg"><span class="chat-name" style="color:${color}">${name}:</span> ${text}</div>`;
@@ -883,24 +804,9 @@
             });
         }
 
-        function showMenu(id) {
-            ['setup-menu', 'host-menu', 'loading-menu'].forEach(m => document.getElementById(m).style.display = 'none');
-            if(id) document.getElementById(id).style.display = 'block';
-        }
-
         document.getElementById('btn-create').addEventListener('click', hostRoom);
         document.getElementById('btn-join').addEventListener('click', () => { const code = document.getElementById('join-input').value.trim(); if(code) joinRoom(code); });
-        document.getElementById('btn-copy').addEventListener('click', () => { navigator.clipboard.writeText(document.getElementById('display-link').innerText); });
         
-        document.getElementById('btn-start').addEventListener('click', () => {
-            if(raceStarted) return;
-            raceStarted = true; raceFinished = false; startTime = Date.now();
-            enterGame();
-            if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
-            showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
-            sendHostCommand('start', { startTime: startTime });
-        });
-
         document.getElementById('admin-start').addEventListener('click', () => {
             if(raceStarted) return;
             raceStarted = true; raceFinished = false; startTime = Date.now();
@@ -908,6 +814,7 @@
             showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
             sendHostCommand('start', { startTime: startTime });
         });
+
         document.getElementById('admin-reset').addEventListener('click', () => { sendHostCommand('reset'); });
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -918,7 +825,6 @@
             document.getElementById('lobby').style.display = 'none'; 
             document.getElementById('ui-container').style.display = 'block';
             
-            previewGrp.visible = false;
             localPlayer = createAvatar(myAvatarColor, myAvatarClass, myName, myAccessoryId); scene.add(localPlayer.group); playerGrp = localPlayer.group;
             
             respawnPoint.x = (Math.random() - 0.5) * 15; respawnPoint.z = Math.random() * 10;
@@ -928,7 +834,7 @@
         }
 
         // =========================================================
-        // 10. CORE GAME LOOP, CAMERA, & PHYSICS
+        // 9. CORE GAME LOOP, CAMERA, & PHYSICS
         // =========================================================
         const keys = {}; 
         window.addEventListener('keydown', e => { 
@@ -990,7 +896,6 @@
 
             if (!window.gameActive) {
                 menuCamAngle += 0.002; camera.position.set(Math.sin(menuCamAngle)*40, 20, Math.cos(menuCamAngle)*40 - 20); camera.lookAt(0, 0, -20);
-                if(menuAvatar) { menuAvatar.group.rotation.y += 0.01; menuAvatar.droneGrp.position.y = 4.5 + Math.sin(time * 0.005) * 0.3; }
                 renderer.render(scene, camera); return;
             }
 
@@ -1064,7 +969,6 @@
                     velocity.x = THREE.MathUtils.lerp(velocity.x, moveVec.x * speed, isGrounded ? 0.6 : 0.3);
                     velocity.z = THREE.MathUtils.lerp(velocity.z, moveVec.z * speed, isGrounded ? 0.6 : 0.3);
 
-                    // Add Math.PI to rotation logic to properly face direction of movement without looking backwards
                     const targetAngle = Math.atan2(velocity.x, velocity.z) + Math.PI;
                     let diff = targetAngle - playerGrp.rotation.y;
                     while(diff < -Math.PI) diff += Math.PI*2; while(diff > Math.PI) diff -= Math.PI*2;
