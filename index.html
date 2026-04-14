@@ -107,9 +107,6 @@
         .lb-title { color: #d946ef; font-weight: 800; font-size: 14px; border-bottom: 2px solid #4c1d95; padding-bottom: 5px; margin-bottom: 10px; }
         .leaderboard-entry { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,242,254,0.2); font-size: 14px; }
         
-        /* Host Admin Panel */
-        #host-panel { position: absolute; top: 250px; left: 20px; width: 240px; border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.3); display: none; }
-        
         /* Screen Messages */
         #race-message { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: #fff; text-shadow: 0 0 30px #d946ef, 0 0 10px #d946ef; display: none; text-align: center; z-index: 50; font-style: italic; letter-spacing: 5px; }
         .floating-text { position: absolute; font-weight: 900; font-size: 24px; pointer-events: none; text-shadow: 2px 2px 0 #000, 0 0 10px currentColor; animation: floatUp 1.2s forwards; z-index: 10; font-family: 'Orbitron', sans-serif; }
@@ -119,12 +116,6 @@
         #freeze-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(100, 200, 255, 0.4); border: 20px solid rgba(255,255,255,0.5); box-sizing: border-box; pointer-events: none; display: none; z-index: 40; backdrop-filter: blur(4px); }
         #speed-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 50%, rgba(255,255,255,0.2) 100%); transition: opacity 0.2s; z-index: 30;}
         #look-hint { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #fff; text-shadow: 0 0 10px #00f2fe; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 20px; border: 1px solid #00f2fe; pointer-events: none; opacity: 0.8; transition: opacity 0.5s; }
-
-        /* Settings Modal */
-        #settings-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 10, 20, 0.95); padding: 30px; border-radius: 20px; border: 2px solid #d946ef; box-shadow: 0 0 40px rgba(217,70,239,0.5); z-index: 60; display: none; flex-direction: column; gap: 15px; width: 350px; pointer-events: auto; text-align: center; }
-        #settings-modal h2 { margin: 0 0 15px 0; color: #d946ef; text-shadow: 0 0 10px rgba(217,70,239,0.5); }
-        #btn-open-settings { position: absolute; top: 15px; left: 15px; background: transparent; border: none; font-size: 24px; cursor: pointer; transition: 0.2s; filter: drop-shadow(0 0 5px #00f2fe); }
-        #btn-open-settings:hover { transform: scale(1.2); }
     </style>
 </head>
 <body>
@@ -136,24 +127,34 @@
             <h1>CYBER OBBY</h1>
             <p class="subtitle">Multiplayer Platformer Racing</p>
             
-            <div id="main-menu">
-                <button class="btn" id="btn-create">Create a Room (Host)</button>
-                <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.2); position: relative;">
-                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 20, 1); padding: 0 10px; font-size: 14px; color: #94a3b8; font-weight: bold;">OR</span>
+            <div id="setup-menu">
+                <input type="text" id="player-name" placeholder="ENTER USERNAME" maxlength="12" value="RACER">
+                
+                <p class="color-title">CHASSIS TYPE</p>
+                <div class="class-selector">
+                    <div class="class-btn selected" data-class="classic">CLASSIC</div>
+                    <div class="class-btn" data-class="heavy">HEAVY BRUTE</div>
+                    <div class="class-btn" data-class="sleek">SLEEK NINJA</div>
+                    <div class="class-btn" data-class="hover">HOVER DRONE</div>
                 </div>
-                <input type="text" id="join-input" placeholder="ENTER 4-LETTER CODE" maxlength="4">
-                <button class="btn secondary" id="btn-join">Join Room</button>
-            </div>
 
-            <div id="host-menu">
-                <p style="color: #94a3b8; font-weight: bold;">YOUR ROOM CODE:</p>
-                <div class="room-code-display" id="display-code">ABCD</div>
-                <p style="color: #94a3b8; font-size: 12px;">Share link to invite friends:</p>
-                <div class="link-box" id="display-link">https://...</div>
-                <button class="btn secondary" id="btn-copy" style="margin-bottom: 20px;">Copy Link</button>
-                <br>
-                <p style="color: #00f2fe; font-size: 14px; margin-bottom: 10px;">Waiting for players in Chat...</p>
-                <button class="btn" id="btn-start">Enter Course</button>
+                <p class="color-title">ARMOR PAINT</p>
+                <div class="color-swatches" id="swatch-container">
+                    <div class="swatch selected" style="background: #3b82f6; color: #3b82f6;" data-hex="0x3b82f6"></div>
+                    <div class="swatch" style="background: #ef4444; color: #ef4444;" data-hex="0xef4444"></div>
+                    <div class="swatch" style="background: #10b981; color: #10b981;" data-hex="0x10b981"></div>
+                    <div class="swatch" style="background: #f59e0b; color: #f59e0b;" data-hex="0xf59e0b"></div>
+                    <div class="swatch" style="background: #d946ef; color: #d946ef;" data-hex="0xd946ef"></div>
+                    <div class="swatch" style="background: #ffffff; color: #ffffff;" data-hex="0xffffff"></div>
+                </div>
+                
+                <p class="color-title">ACCESSORIES (30+ OPTIONS)</p>
+                <div class="acc-grid" id="acc-container">
+                    <!-- Populated by JS -->
+                </div>
+
+                <input type="text" id="join-input" placeholder="ROOM CODE (e.g. CITY)" maxlength="10">
+                <button class="btn" id="btn-join">Join / Create Room</button>
             </div>
 
             <div id="loading-menu">
@@ -199,8 +200,7 @@
         
         <!-- Top Right: Controls & Leaderboard -->
         <div id="top-right-hud" class="hud-panel">
-            <button id="btn-open-settings" title="Settings">⚙️</button>
-            <h3 style="margin: 0 0 10px 0; color: #c4b5fd; margin-left: 30px;">CONTROLS</h3>
+            <h3 style="margin: 0 0 10px 0; color: #c4b5fd;">CONTROLS</h3>
             <p><span class="key">W A S D</span> Move</p>
             <p><span class="key">SHIFT</span> Sprint (Boosts Speed/Jump)</p>
             <p><span class="key">SPACE</span> Jump</p>
@@ -232,29 +232,7 @@
             <div id="item-slot">❓</div>
         </div>
 
-        <!-- Mid Left: Host Admin Panel -->
-        <div id="host-panel" class="hud-panel">
-            <h3 style="margin: 0 0 10px 0; color: #ef4444; text-align: center;">HOST ADMIN</h3>
-            <button class="btn" id="admin-start" style="padding: 8px; font-size: 12px; margin-bottom: 10px;">START RACE</button>
-            <button class="btn secondary" id="admin-reset" style="padding: 8px; font-size: 12px; margin-bottom: 0; border-color:#ef4444; color:#ef4444;">RESET EVERYONE</button>
-        </div>
-
         <div id="race-message">GO!</div>
-
-        <!-- Settings Modal -->
-        <div id="settings-modal">
-            <h2>SETTINGS</h2>
-            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px solid #334155;">
-                <p style="margin: 0 0 5px 0; color: #94a3b8; font-size: 12px; font-weight: bold;">ROOM CODE</p>
-                <div style="font-size: 28px; color: #00f2fe; font-weight: 900; letter-spacing: 5px;" id="settings-code">ABCD</div>
-                <button class="btn secondary" id="settings-copy-code" style="padding: 10px; font-size: 12px; margin-top: 10px;">COPY CODE</button>
-            </div>
-            <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; border: 1px solid #334155;">
-                <p style="margin: 0 0 5px 0; color: #94a3b8; font-size: 12px; font-weight: bold;">INVITE LINK</p>
-                <button class="btn secondary" id="settings-copy-link" style="padding: 10px; font-size: 12px; margin-top: 5px;">COPY LINK</button>
-            </div>
-            <button class="btn" id="settings-resume" style="margin-top: 10px;">RESUME GAME</button>
-        </div>
     </div>
 
     <!-- SCRIPTS -->
@@ -277,7 +255,19 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.getElementById('bg-canvas-container').appendChild(renderer.domElement);
+
+        // Ensure canvas container is loaded properly
+        const initCanvas = () => {
+            const container = document.getElementById('bg-canvas-container');
+            if (container) {
+                container.appendChild(renderer.domElement);
+            } else if (document.body) {
+                document.body.appendChild(renderer.domElement);
+            } else {
+                setTimeout(initCanvas, 50);
+            }
+        };
+        initCanvas();
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.4));
         const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -304,12 +294,11 @@
         var sprintStamina = 100; const MAX_SPRINT = 100; const SPRINT_DRAIN = 1.0; const SPRINT_REGEN = 0.5;
 
         // Firebase Globals
-        var app, auth, db, myId = "", isHost = false, roomCode = "";
+        var app, auth, db, myId = "", roomCode = "";
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'cyber-obby-v4';
         const remotePlayers = new Map(); 
-        var isSettingsOpen = false;
         
-        var raceStarted = false; var raceFinished = false; var startTime = 0; var finishedTimeMs = 0; var leaderboard = [];
+        var raceFinished = false; var startTime = 0; var finishedTimeMs = 0; var leaderboard = [];
 
         const platforms = []; const itemBoxes = []; const portals = []; const dynamicObjects = []; const hazards = [];
 
@@ -364,9 +353,8 @@
                     });
                 });
             } catch(e) {
-                console.error("Firebase init failed:", e);
+                console.warn("Firebase config not found, running offline mode.");
                 myId = "local_" + Math.random().toString(36).substr(2, 9);
-                alert("Multiplayer connection failed. Running in Offline Single-Player Mode.");
                 return true; 
             }
         }
@@ -515,6 +503,28 @@
             return { group, armL, armR, legL, legR, headGrp, droneGrp, droneItem, iceBlock, nametag, color: colorHex, type, accId };
         }
 
+        const previewGrp = new THREE.Group(); scene.add(previewGrp);
+        var menuAvatar = null;
+        function updateMenuAvatar() {
+            if(menuAvatar) previewGrp.remove(menuAvatar.group);
+            const nm = document.getElementById('player-name') ? document.getElementById('player-name').value : "RACER";
+            menuAvatar = createAvatar(myAvatarColor, myAvatarClass, nm || "RACER", myAccessoryId);
+            menuAvatar.group.position.set(0, -2, 15); previewGrp.add(menuAvatar.group);
+        }
+
+        document.querySelectorAll('.swatch').forEach(s => s.addEventListener('click', (e) => {
+            document.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+            e.target.classList.add('selected'); myAvatarColor = parseInt(e.target.getAttribute('data-hex')); updateMenuAvatar();
+        }));
+        document.querySelectorAll('.class-btn').forEach(b => b.addEventListener('click', (e) => {
+            document.querySelectorAll('.class-btn').forEach(x => x.classList.remove('selected'));
+            e.target.classList.add('selected'); myAvatarClass = e.target.getAttribute('data-class'); updateMenuAvatar();
+        }));
+        const pNameInput = document.getElementById('player-name');
+        if(pNameInput) pNameInput.addEventListener('input', updateMenuAvatar);
+        
+        updateMenuAvatar(); 
+
         // =========================================================
         // 5. LEVEL BUILDER (SINGLE STAGE)
         // =========================================================
@@ -542,22 +552,13 @@
             hazards.push({ pivot, laser, type: 'rotlase', length, speed, x,y,z });
         }
 
-        var startBarrier;
         function buildLevels() {
             // --- STAGE 1: NEON GRID (Origin: 0,0,0) ---
             addPlatform(0, -2, 0, 40, 4, 40, MATS.stage1, MATS.stage1_neon, "start");
             
-            startBarrier = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), MATS.barrier);
-            startBarrier.position.set(0, 15, -20); scene.add(startBarrier);
-
-            addPlatform(0, 0, -40, 15, 2, 15, MATS.stage1, MATS.stage1_neon);
-            addPlatform(-20, 5, -60, 15, 2, 15, MATS.stage1, MATS.stage1_neon); buildItemBox(-20, 8, -60);
-            
-            addPlatform(20, 10, -80, 15, 2, 15, MATS.stage1, MATS.stage1_neon);
-            
-            addPlatform(0, 15, -120, 25, 2, 25, MATS.stage1, MATS.stage1_neon);
-            buildLaserHazard(0, 17, -120, 12, 0.02);
-            buildItemBox(-8, 18, -120); buildItemBox(8, 18, -120);
+            addPlatform(0, 0, -40, 15, 2, 15, MATS.stage1, MATS.stage1_neon); addPlatform(-20, 5, -60, 15, 2, 15, MATS.stage1, MATS.stage1_neon); buildItemBox(-20, 8, -60);
+            addPlatform(20, 10, -80, 15, 2, 15, MATS.stage1, MATS.stage1_neon); addPlatform(0, 15, -120, 25, 2, 25, MATS.stage1, MATS.stage1_neon);
+            buildLaserHazard(0, 17, -120, 12, 0.02); buildItemBox(-8, 18, -120); buildItemBox(8, 18, -120);
             
             // Replaced Portal with Finish Line to complete the race on Stage 1
             const finishY = 15; const finishZ = -180;
@@ -627,32 +628,12 @@
         // 7. FIREBASE SYNC & MULTIPLAYER
         // =========================================================
         var lastHandledEventTs = {};
-        var roomCmdTs = 0;
         var pendingEvent = null;
 
         function syncEvent(eventType, payload={}) { pendingEvent = { type: eventType, ts: Date.now(), ...payload }; syncLocalPlayer(true); }
 
         function setupMultiplayerListeners() {
             if (!db) return;
-            const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomCode);
-            onSnapshot(roomRef, (snap) => {
-                if (!snap.exists()) return;
-                const data = snap.data();
-                if (data.ts > roomCmdTs) {
-                    roomCmdTs = data.ts;
-                    if (data.cmd === 'start') {
-                        raceStarted = true; raceFinished = false; startTime = data.startTime;
-                        if(!window.gameActive) enterGame();
-                        if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
-                        showFloatingText("GO!", playerGrp.position, "#d946ef");
-                    } else if (data.cmd === 'reset') {
-                        raceStarted = false; raceFinished = false; const timerEl = document.getElementById('timer'); if(timerEl) timerEl.innerText = "WAITING";
-                        currentStage = 1; respawnPoint.set(0, 10, 0); dieAndRespawn("ADMIN RESET");
-                        leaderboard = []; updateLeaderboardUI(); const msgEl = document.getElementById('race-message'); if (msgEl) msgEl.style.display = 'none';
-                        if (!startBarrier) { startBarrier = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), MATS.barrier); startBarrier.position.set(0, 15, -20); scene.add(startBarrier); }
-                    }
-                }
-            });
 
             const playersRef = collection(db, 'artifacts', appId, 'public', 'data', 'players');
             onSnapshot(playersRef, (snap) => {
@@ -712,66 +693,25 @@
             setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'players', myId), payload).catch(e => {});
         }
 
-        function sendHostCommand(cmdStr, extra={}) {
-            if (!db || !isHost) return;
-            setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomCode), { cmd: cmdStr, ts: Date.now(), ...extra }).catch(e => {});
-        }
-
         // =========================================================
         // 8. LOBBY UI & CHAT
         // =========================================================
-        async function hostRoom() {
-            const PALETTE = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0xd946ef, 0xffffff];
-            const CLASSES = ['classic', 'heavy', 'sleek', 'hover'];
-            myName = "Player-" + Math.floor(Math.random() * 9999);
-            myAvatarColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-            myAvatarClass = CLASSES[Math.floor(Math.random() * CLASSES.length)];
-            myAccessoryId = Math.floor(Math.random() * 31);
-            
-            roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-            
-            const lm = document.getElementById('loading-menu'); if(lm) lm.style.display = 'block';
-            await initFirebase();
-            
-            isHost = true; setupMultiplayerListeners();
+        async function joinRoom() {
+            const inputEl = document.getElementById('join-input');
+            const code = inputEl ? inputEl.value.trim().toUpperCase() : "CITY";
+            if (!code) return;
 
-            const hm = document.getElementById('host-menu'); if(hm) hm.style.display = 'block';
-            const dcode = document.getElementById('display-code'); if(dcode) dcode.innerText = roomCode;
-            const dlink = document.getElementById('display-link'); if(dlink) dlink.innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
-            const hudcode = document.getElementById('hud-code-display'); if(hudcode) hudcode.innerText = roomCode;
-            const hp = document.getElementById('host-panel'); if(hp) hp.style.display = 'block'; 
-            const cb = document.getElementById('chat-lobby-box'); if(cb) cb.style.display = 'flex';
+            const inputName = document.getElementById('player-name');
+            myName = (inputName && inputName.value) ? inputName.value : "RACER";
+            roomCode = code;
             
-            enterGame();
-            appendChat("System", "Room Created. Waiting for players...", "#94a3b8");
-        }
-
-        async function joinRoom(code) {
-            const PALETTE = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0xd946ef, 0xffffff];
-            const CLASSES = ['classic', 'heavy', 'sleek', 'hover'];
-            myName = "Player-" + Math.floor(Math.random() * 9999);
-            myAvatarColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-            myAvatarClass = CLASSES[Math.floor(Math.random() * CLASSES.length)];
-            myAccessoryId = Math.floor(Math.random() * 31);
-            
-            code = code.toUpperCase(); roomCode = code;
-            
-            const lm = document.getElementById('loading-menu'); if(lm) lm.style.display = 'block';
-            const lt = document.getElementById('loading-text'); if(lt) lt.innerText = `JOINING ${code}...`;
+            showMenu('loading-menu'); const loadingTxt = document.getElementById('loading-text'); if(loadingTxt) loadingTxt.innerText = `JOINING ${code}...`;
             
             await initFirebase();
-            isHost = false; setupMultiplayerListeners();
+            setupMultiplayerListeners();
 
-            const hm = document.getElementById('host-menu'); if(hm) hm.style.display = 'block';
-            const dcode = document.getElementById('display-code'); if(dcode) dcode.innerText = roomCode;
-            const dlink = document.getElementById('display-link'); if(dlink) dlink.innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
-            const hudcode = document.getElementById('hud-code-display'); if(hudcode) hudcode.innerText = roomCode;
-            const hp = document.getElementById('host-panel'); if(hp) hp.style.display = 'none'; 
-            const cb = document.getElementById('chat-lobby-box'); if(cb) cb.style.display = 'flex';
-            const bs = document.getElementById('btn-start'); if(bs) bs.style.display = 'none'; 
-            
             enterGame();
-            appendChat("System", "Connected to Room! Waiting for host to start.", "#94a3b8");
+            appendChat("System", "Connected to Room! Have fun!", "#94a3b8");
         }
 
         function sendChatFromInput(inputId) {
@@ -823,7 +763,7 @@
         }
 
         function updateLiveRanks() {
-            if(raceFinished || !raceStarted || !playerGrp) return;
+            if(raceFinished || !playerGrp) return;
             let racers = [{ id: myId, name: "YOU", z: playerGrp.position.z }];
             remotePlayers.forEach((p, id) => racers.push({ id, name: p.name, z: p.progressZ || 0 }));
             racers.sort((a,b) => a.z - b.z);
@@ -837,76 +777,35 @@
             });
         }
 
-        const btnCreate = document.getElementById('btn-create'); if(btnCreate) btnCreate.addEventListener('click', hostRoom);
-        const btnJoin = document.getElementById('btn-join'); if(btnJoin) btnJoin.addEventListener('click', () => { const code = document.getElementById('join-input'); if(code && code.value.trim()) joinRoom(code.value.trim()); });
-        const btnCopy = document.getElementById('btn-copy'); if(btnCopy) btnCopy.addEventListener('click', () => { const link = document.getElementById('display-link'); if(link) navigator.clipboard.writeText(link.innerText); });
-        
-        const btnStart = document.getElementById('btn-start');
-        if(btnStart) btnStart.addEventListener('click', () => {
-            if(raceStarted) return;
-            raceStarted = true; raceFinished = false; startTime = Date.now();
-            enterGame();
-            if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
-            showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
-            sendHostCommand('start', { startTime: startTime });
-        });
+        function showMenu(id) {
+            ['setup-menu', 'loading-menu'].forEach(m => { const el = document.getElementById(m); if(el) el.style.display = 'none'; });
+            if(id) { const el = document.getElementById(id); if(el) el.style.display = 'block'; }
+        }
 
-        const btnAdminStart = document.getElementById('admin-start');
-        if(btnAdminStart) btnAdminStart.addEventListener('click', () => {
-            if(raceStarted) return;
-            raceStarted = true; raceFinished = false; startTime = Date.now();
-            if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
-            showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
-            sendHostCommand('start', { startTime: startTime });
-        });
-        const btnAdminReset = document.getElementById('admin-reset');
-        if(btnAdminReset) btnAdminReset.addEventListener('click', () => { sendHostCommand('reset'); });
+        const btnJoin = document.getElementById('btn-join'); if(btnJoin) btnJoin.addEventListener('click', joinRoom);
 
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('room')) joinRoom(urlParams.get('room'));
-
-        // --- Settings Menu Logic ---
-        const btnOpenSettings = document.getElementById('btn-open-settings');
-        const settingsModal = document.getElementById('settings-modal');
-        const btnResume = document.getElementById('settings-resume');
-        const btnCopyCode = document.getElementById('settings-copy-code');
-        const btnCopyLink = document.getElementById('settings-copy-link');
-
-        if(btnOpenSettings) btnOpenSettings.addEventListener('click', () => {
-            isSettingsOpen = true;
-            settingsModal.style.display = 'flex';
-            document.getElementById('settings-code').innerText = roomCode;
-        });
-
-        if(btnResume) btnResume.addEventListener('click', () => {
-            isSettingsOpen = false;
-            settingsModal.style.display = 'none';
-        });
-
-        if(btnCopyCode) btnCopyCode.addEventListener('click', () => {
-            navigator.clipboard.writeText(roomCode);
-            btnCopyCode.innerText = "COPIED!";
-            setTimeout(() => btnCopyCode.innerText = "COPY CODE", 2000);
-        });
-
-        if(btnCopyLink) btnCopyLink.addEventListener('click', () => {
-            const link = window.location.href.split('?')[0] + "?room=" + roomCode;
-            navigator.clipboard.writeText(link);
-            btnCopyLink.innerText = "COPIED!";
-            setTimeout(() => btnCopyLink.innerText = "COPY LINK", 2000);
-        });
+        if (urlParams.get('room')) {
+            const ji = document.getElementById('join-input');
+            if(ji) ji.value = urlParams.get('room');
+            joinRoom();
+        }
 
         function enterGame() {
             if (window.gameActive) return; window.gameActive = true;
             const lobby = document.getElementById('lobby'); if(lobby) lobby.style.display = 'none'; 
             const uiContainer = document.getElementById('ui-container'); if(uiContainer) uiContainer.style.display = 'block';
+            const hudCode = document.getElementById('hud-code-display'); if(hudCode) hudCode.innerText = roomCode;
             
+            if(previewGrp) previewGrp.visible = false;
             localPlayer = createAvatar(myAvatarColor, myAvatarClass, myName, myAccessoryId); scene.add(localPlayer.group); playerGrp = localPlayer.group;
             
             respawnPoint.x = (Math.random() - 0.5) * 15; respawnPoint.z = Math.random() * 10;
             playerGrp.position.copy(respawnPoint);
             
             camYaw = 0; camPitch = 0.2; updatePlayersUI(); updateItemUI();
+            
+            startTime = Date.now();
         }
 
         // =========================================================
@@ -914,7 +813,7 @@
         // =========================================================
         const keys = {}; 
         window.addEventListener('keydown', e => { 
-            if (e.code === 'Enter' && window.gameActive && !isSettingsOpen) {
+            if (e.code === 'Enter' && window.gameActive) {
                 const input = document.getElementById('ig-chat-input');
                 const container = document.getElementById('ig-chat-input-container');
                 if (document.activeElement === input) {
@@ -923,7 +822,7 @@
                     window.isTyping = true; if(container) container.style.display = 'flex'; if(input) input.focus(); e.preventDefault();
                 }
             }
-            if (window.isTyping || isSettingsOpen) return; 
+            if (window.isTyping) return; 
             keys[e.code] = true; 
             if ((e.code === 'KeyE' || e.code === 'ShiftLeft') && window.gameActive) useItem();
         });
@@ -931,12 +830,12 @@
 
         var isDraggingCam = false;
         document.addEventListener('mousedown', (e) => { 
-            if(e.target.closest('#ui-container') || e.target.closest('#lobby') || isSettingsOpen) return;
+            if(e.target.closest('#ui-container') || e.target.closest('#lobby')) return;
             isDraggingCam = true; const hint = document.getElementById('look-hint'); if(hint) hint.style.opacity = '0'; 
         });
         document.addEventListener('mouseup', () => isDraggingCam = false);
         document.addEventListener('mousemove', (e) => {
-            if(isDraggingCam && window.gameActive && !isFrozen && !isSettingsOpen) {
+            if(isDraggingCam && window.gameActive && !isFrozen) {
                 camYaw -= e.movementX * 0.005; camPitch -= e.movementY * 0.005;
                 camPitch = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, camPitch));
             }
@@ -946,7 +845,7 @@
             if(!playerGrp) return;
             playerGrp.position.copy(respawnPoint); velocity.set(0,0,0);
             isFrozen = false; isStunned = false; hasBoost = false; sprintStamina = MAX_SPRINT;
-            localPlayer.iceBlock.visible = false; const fO = document.getElementById('freeze-overlay'); if(fO) fO.style.display='none';
+            if(localPlayer) localPlayer.iceBlock.visible = false; const fO = document.getElementById('freeze-overlay'); if(fO) fO.style.display='none';
             showFloatingText(msg, playerGrp.position, "#ef4444");
         }
 
@@ -972,12 +871,13 @@
 
             if (!window.gameActive) {
                 menuCamAngle += 0.002; camera.position.set(Math.sin(menuCamAngle)*40, 20, Math.cos(menuCamAngle)*40 - 20); camera.lookAt(0, 0, -20);
+                if(menuAvatar) { menuAvatar.group.rotation.y += 0.01; menuAvatar.droneGrp.position.y = 4.5 + Math.sin(time * 0.005) * 0.3; }
                 renderer.render(scene, camera); return;
             }
 
             if(!playerGrp || !localPlayer) return; 
 
-            if (raceStarted && !raceFinished) { const tEl = document.getElementById('timer'); if(tEl) tEl.innerText = formatTime(time - startTime); if(time % 30 === 0) updateLiveRanks(); }
+            if (!raceFinished) { const tEl = document.getElementById('timer'); if(tEl) tEl.innerText = formatTime(time - startTime); if(time % 30 === 0) updateLiveRanks(); }
             const sInd = document.getElementById('stage-indicator'); if(sInd) sInd.innerText = `STAGE ${currentStage} / 1`;
             
             if (boostTimer > 0) { boostTimer -= 16; if(boostTimer <= 0) hasBoost = false; }
@@ -1031,7 +931,7 @@
                 }
             }
 
-            if (!isFrozen && !isStunned && !window.isTyping && !isSettingsOpen) {
+            if (!isFrozen && !isStunned && !window.isTyping) {
                 let speed = hasBoost ? MOVE_SPEED * 1.8 : (isSprinting ? SPRINT_SPEED : MOVE_SPEED);
                 
                 let moveX = 0; let moveZ = 0;
@@ -1071,9 +971,6 @@
             }
 
             playerGrp.position.z += velocity.z;
-            if (startBarrier && startBarrier.parent && playerGrp.position.z < -19 && playerGrp.position.z > -21 && Math.abs(playerGrp.position.x) < 20) {
-                playerGrp.position.z = -19; velocity.z = 0;
-            }
             for (let p of platforms) {
                 if (checkCollision(playerGrp.position, p)) {
                     if (velocity.z > 0) playerGrp.position.z = p.minZ - PLAYER_RADIUS; else if (velocity.z < 0) playerGrp.position.z = p.maxZ + PLAYER_RADIUS;
@@ -1098,22 +995,15 @@
 
             if (stoodOn) {
                 if (stoodOn.type === 'lava') dieAndRespawn("INCINERATED!");
-                else if (stoodOn.type === 'finish' && raceStarted && !raceFinished) {
+                else if (stoodOn.type === 'conveyor' && stoodOn.convZ) playerGrp.position.z += stoodOn.convZ;
+                else if (stoodOn.type === 'check') {
+                    const checkPos = new THREE.Vector3(stoodOn.mesh.position.x, stoodOn.mesh.position.y + 5, stoodOn.mesh.position.z);
+                    if (respawnPoint.distanceTo(checkPos) > 1) { respawnPoint.copy(checkPos); showFloatingText("CHECKPOINT!", playerGrp.position, "#39ff14"); }
+                }
+                else if (stoodOn.type === 'finish' && !raceFinished) {
                     raceFinished = true; finishedTimeMs = time - startTime;
                     const rm = document.getElementById('race-message'); if(rm) { rm.innerText = `FINISHED!\n${formatTime(finishedTimeMs)}`; rm.style.display = 'block'; }
                     updateLeaderboard(myId, myName, finishedTimeMs); syncEvent('finish', { time: finishedTimeMs });
-                }
-            }
-
-            if (!isStunned && !isFrozen) {
-                if (currentItem === ITEMS.NONE) {
-                    for (let b of itemBoxes) {
-                        if (b.active && playerGrp.position.distanceTo(b.inner.position) < 3) {
-                            currentItem = rollItem(); updateItemUI();
-                            b.active = false; b.inner.visible = false; b.outer.visible = false; b.respawnTimer = time + 5000;
-                            showFloatingText("+ ITEM", playerGrp.position, "#fff"); break;
-                        }
-                    }
                 }
             }
 
