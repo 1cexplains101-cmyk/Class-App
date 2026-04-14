@@ -19,11 +19,11 @@
         /* Lobby */
         #lobby { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(30,27,75,0.7) 0%, rgba(3,3,8,0.9) 100%); display: flex; flex-direction: row; align-items: center; justify-content: center; z-index: 100; gap: 40px; }
         
-        #lobby-box { background: rgba(10, 10, 20, 0.85); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #00f2fe; text-align: center; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); width: 400px; flex-shrink: 0; max-height: 90vh; overflow-y: auto; }
+        #lobby-box { background: rgba(10, 10, 20, 0.85); padding: 30px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #00f2fe; text-align: center; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); width: 480px; flex-shrink: 0; max-height: 90vh; overflow-y: auto; }
         #chat-lobby-box { background: rgba(10, 10, 20, 0.85); padding: 20px; border-radius: 20px; backdrop-filter: blur(20px); border: 2px solid #8b5cf6; display: flex; flex-direction: column; width: 350px; height: 500px; box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); display: none; }
         
         h1 { margin: 0 0 5px 0; font-size: 2.5rem; color: #00f2fe; text-shadow: 0 0 15px #00f2fe; text-transform: uppercase; letter-spacing: 2px; }
-        .subtitle { font-size: 1rem; color: #94a3b8; margin-bottom: 30px; letter-spacing: 1px; }
+        .subtitle { font-size: 1rem; color: #94a3b8; margin-bottom: 20px; letter-spacing: 1px; }
         
         /* Scrollbar for lobby */
         ::-webkit-scrollbar { width: 8px; }
@@ -31,14 +31,33 @@
         ::-webkit-scrollbar-thumb { background: #00f2fe; border-radius: 4px; }
         
         /* Buttons & Inputs */
-        .btn { padding: 16px 24px; font-size: 16px; font-weight: 800; border: none; border-radius: 12px; background: linear-gradient(90deg, #00f2fe, #4facfe); color: #030308; cursor: pointer; transition: all 0.2s; text-shadow: 0 1px 2px rgba(255,255,255,0.5); width: 100%; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; }
+        .btn { padding: 14px 24px; font-size: 16px; font-weight: 800; border: none; border-radius: 12px; background: linear-gradient(90deg, #00f2fe, #4facfe); color: #030308; cursor: pointer; transition: all 0.2s; text-shadow: 0 1px 2px rgba(255,255,255,0.5); width: 100%; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 242, 254, 0.5); }
         .btn:active { transform: translateY(1px); }
         .btn.secondary { background: rgba(255,255,255,0.05); border: 2px solid #00f2fe; color: #00f2fe; box-shadow: none; text-shadow: none; }
         .btn.secondary:hover { background: rgba(0, 242, 254, 0.2); }
         
-        input[type="text"] { width: 100%; padding: 16px; font-size: 16px; border: 2px solid #00f2fe; border-radius: 12px; box-sizing: border-box; margin-bottom: 15px; text-align: center; background: rgba(0,0,0,0.5); color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; outline: none; }
+        input[type="text"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #00f2fe; border-radius: 12px; box-sizing: border-box; margin-bottom: 15px; text-align: center; background: rgba(0,0,0,0.5); color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; outline: none; }
         input[type="text"]:focus { border-color: #d946ef; box-shadow: 0 0 15px rgba(217,70,239,0.5); }
+
+        /* Avatar Customization */
+        .color-title { color: #00f2fe; font-weight: 800; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-align: left; border-bottom: 1px solid rgba(0,242,254,0.3); padding-bottom: 5px; }
+        
+        .color-swatches { display: flex; justify-content: flex-start; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .swatch:hover { transform: scale(1.1); }
+        .swatch.selected { border: 2px solid #fff; box-shadow: 0 0 15px currentColor; transform: scale(1.2); }
+        
+        .class-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .class-btn { background: rgba(0,0,0,0.5); border: 2px solid #334155; color: #94a3b8; padding: 8px; border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: bold; transition: 0.2s; }
+        .class-btn:hover { border-color: #00f2fe; color: #00f2fe; }
+        .class-btn.selected { border-color: #d946ef; color: #d946ef; background: rgba(217,70,239,0.1); box-shadow: 0 0 10px rgba(217,70,239,0.3); }
+
+        /* Accessory Grid */
+        .acc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
+        .acc-btn { background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; padding: 8px 0; font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .acc-btn:hover { border-color: #00f2fe; transform: scale(1.05); }
+        .acc-btn.selected { background: rgba(0,242,254,0.2); border-color: #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.4); }
 
         /* Lobby Menus */
         #host-menu, #loading-menu, #preview-box { display: none; }
@@ -163,7 +182,7 @@
 
         <!-- Top Left: Status, Stage & Sprint -->
         <div id="top-left-hud" class="hud-panel">
-            <div id="stage-indicator">STAGE 1 / 5</div>
+            <div id="stage-indicator">STAGE 1 / 1</div>
             <div id="time-board"><span id="timer">WAITING</span></div>
             <div id="sprint-container">
                 <div id="sprint-fill"></div>
@@ -285,16 +304,9 @@
             droneEye: new THREE.MeshStandardMaterial({ color: 0x00f2fe, emissive: 0x00f2fe }),
             stage1: new THREE.MeshStandardMaterial({ color: 0x1e1b4b, roughness: 0.6, metalness: 0.4 }),
             stage1_neon: new THREE.MeshStandardMaterial({ color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.5 }),
-            stage2: new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.9 }),
-            stage2_neon: new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981 }),
-            stage3: new THREE.MeshStandardMaterial({ color: 0x7c2d12, roughness: 0.7, metalness: 0.8 }),
-            stage3_neon: new THREE.MeshStandardMaterial({ color: 0xf97316, emissive: 0xf97316 }),
-            stage4: new THREE.MeshStandardMaterial({ color: 0x2e1065, roughness: 0.5, transparent: true, opacity: 0.8 }),
-            stage4_neon: new THREE.MeshStandardMaterial({ color: 0xd946ef, emissive: 0xd946ef }),
             stage5: new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.3, metalness: 0.9 }),
             stage5_neon: new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xfacc15 }),
             itemBox: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2, wireframe: true }),
-            portal: new THREE.MeshStandardMaterial({ color: 0x00f2fe, emissive: 0x00f2fe, transparent: true, opacity: 0.6, side: THREE.DoubleSide }),
             barrier: new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0xff0055, transparent: true, opacity: 0.3, side: THREE.DoubleSide }),
             laser: new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 1.5 }),
             mine: new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000 }),
@@ -456,10 +468,17 @@
             const iceBlock = new THREE.Mesh(new THREE.BoxGeometry(4.5, 6.5, 4.5), MATS.iceCube);
             iceBlock.position.y = 2.5; iceBlock.visible = false; group.add(iceBlock);
 
-            // Add Accessory
-            const accData = ACC_DATA.find(a => a.id === accId);
-            if(accData && accData.slot !== 'none') {
-                const accMesh = buildAccessory(accId);
+            const accMesh = buildAccessory(accId);
+            const accData = [
+                {id:1,slot:'head'}, {id:2,slot:'head'}, {id:3,slot:'head'}, {id:4,slot:'head'}, {id:5,slot:'head'},
+                {id:6,slot:'head'}, {id:7,slot:'head'}, {id:8,slot:'head'}, {id:9,slot:'head'}, {id:10,slot:'head'},
+                {id:11,slot:'head'}, {id:12,slot:'head'}, {id:13,slot:'head'}, {id:14,slot:'head'}, {id:15,slot:'head'},
+                {id:16,slot:'head'}, {id:17,slot:'back'}, {id:18,slot:'back'}, {id:19,slot:'back'}, {id:20,slot:'back'},
+                {id:21,slot:'back'}, {id:22,slot:'back'}, {id:23,slot:'back'}, {id:24,slot:'back'}, {id:25,slot:'face'},
+                {id:26,slot:'face'}, {id:27,slot:'face'}, {id:28,slot:'face'}, {id:29,slot:'face'}, {id:30,slot:'face'}
+            ].find(a => a.id === accId);
+
+            if(accData) {
                 if(accData.slot === 'head' || accData.slot === 'face') {
                     if(accData.slot==='head') accMesh.position.y = headGeo.parameters.height/2;
                     headGrp.add(accMesh);
@@ -473,7 +492,7 @@
         }
 
         // =========================================================
-        // 5. LEVEL BUILDER & 5 STAGES
+        // 5. LEVEL BUILDER (SINGLE STAGE)
         // =========================================================
         function addPlatform(x, y, z, w, h, d, matMain, matEdge, type="normal", extra={}) {
             const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matMain);
@@ -492,13 +511,6 @@
             itemBoxes.push({ inner, outer, x, y, z, active: true, respawnTimer: 0 });
         }
 
-        function buildPortal(x, y, z, targetStage, targetPos) {
-            const portal = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 1, 32), MATS.portal);
-            portal.rotation.x = Math.PI / 2; portal.position.set(x, y+4, z); scene.add(portal);
-            portals.push({ mesh: portal, x, y: y+4, z, targetStage, targetPos });
-            const pLight = new THREE.PointLight(0x00f2fe, 2, 40); pLight.position.set(x,y+4,z); scene.add(pLight);
-        }
-
         function buildLaserHazard(x, y, z, length, speed) {
             const pivot = new THREE.Group(); pivot.position.set(x,y,z);
             const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, length, 16), MATS.laser);
@@ -508,43 +520,26 @@
 
         var startBarrier;
         function buildLevels() {
+            // --- STAGE 1: NEON GRID (Origin: 0,0,0) ---
             addPlatform(0, -2, 0, 40, 4, 40, MATS.stage1, MATS.stage1_neon, "start");
-            startBarrier = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), MATS.barrier); startBarrier.position.set(0, 15, -20); scene.add(startBarrier);
-            addPlatform(0, 0, -40, 15, 2, 15, MATS.stage1, MATS.stage1_neon); addPlatform(-20, 5, -60, 15, 2, 15, MATS.stage1, MATS.stage1_neon); buildItemBox(-20, 8, -60);
-            addPlatform(20, 10, -80, 15, 2, 15, MATS.stage1, MATS.stage1_neon); addPlatform(0, 15, -120, 25, 2, 25, MATS.stage1, MATS.stage1_neon);
-            buildLaserHazard(0, 17, -120, 12, 0.02); buildItemBox(-8, 18, -120); buildItemBox(8, 18, -120);
-            buildPortal(0, 16, -130, 2, new THREE.Vector3(1000, 10, 0)); 
+            
+            startBarrier = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), MATS.barrier);
+            startBarrier.position.set(0, 15, -20); scene.add(startBarrier);
 
-            addPlatform(1000, -2, 0, 30, 4, 30, MATS.stage2, MATS.stage2_neon, "start");
-            addPlatform(1000, 0, -40, 15, 2, 15, MATS.stage2, MATS.stage2_neon, "normal", { moveRange: 30, moveSpeed: 0.015, axis: 'x' }); addPlatform(1000, 5, -90, 15, 2, 15, MATS.stage2, MATS.stage2_neon, "normal", { moveRange: 40, moveSpeed: 0.01, axis: 'x' });
-            buildItemBox(1000, 10, -65); addPlatform(1000, 10, -140, 25, 2, 25, MATS.stage2, MATS.stage2_neon);
-            addPlatform(980, 20, -180, 10, 2, 10, MATS.stage2, MATS.stage2_neon); addPlatform(1020, 30, -220, 10, 2, 10, MATS.stage2, MATS.stage2_neon); addPlatform(1000, 40, -260, 20, 2, 20, MATS.stage2, MATS.stage2_neon);
-            buildPortal(1000, 41, -265, 3, new THREE.Vector3(2000, 10, 0));
-
-            addPlatform(2000, -2, 0, 30, 4, 30, MATS.stage3, MATS.stage3_neon, "start");
-            addPlatform(2000, 0, -50, 20, 2, 60, MATS.stage3, MATS.stage3_neon, "conveyor", { convZ: -0.3 }); buildItemBox(2000, 3, -50);
-            addPlatform(1980, 5, -120, 15, 2, 15, MATS.stage3, MATS.stage3_neon);
-            addPlatform(2020, 10, -170, 20, 2, 60, MATS.stage3, MATS.stage3_neon, "conveyor", { convZ: 0.4 }); buildItemBox(2020, 13, -170);
-            addPlatform(2000, 15, -230, 30, 2, 30, MATS.stage3, MATS.stage3_neon);
-            buildPortal(2000, 16, -240, 4, new THREE.Vector3(3000, 10, 0));
-
-            addPlatform(3000, -2, 0, 30, 4, 30, MATS.stage4, MATS.stage4_neon, "start");
-            addPlatform(3000, 0, -40, 15, 2, 15, MATS.stage4, MATS.stage4_neon, "blink", { blinkFreq: 2000, blinkOffset: 0 }); addPlatform(3000, 5, -70, 15, 2, 15, MATS.stage4, MATS.stage4_neon, "blink", { blinkFreq: 2000, blinkOffset: 1000 }); addPlatform(3000, 10, -100, 15, 2, 15, MATS.stage4, MATS.stage4_neon, "blink", { blinkFreq: 2000, blinkOffset: 0 });
-            buildItemBox(2980, 15, -100); buildItemBox(3020, 15, -100);
-            addPlatform(3000, 15, -140, 20, 2, 20, MATS.stage4, MATS.stage4_neon);
-            addPlatform(3000, 20, -190, 10, 2, 10, MATS.stage4, MATS.stage4_neon, "blink", { blinkFreq: 1500, blinkOffset: 0, moveRange: 40, moveSpeed: 0.03, axis: 'x' });
-            addPlatform(3000, 25, -240, 30, 2, 30, MATS.stage4, MATS.stage4_neon);
-            buildPortal(3000, 26, -250, 5, new THREE.Vector3(4000, 10, 0)); 
-
-            addPlatform(4000, -2, 0, 30, 4, 30, MATS.stage5, MATS.stage5_neon, "start");
-            for(let i=1; i<=10; i++) {
-                const zOffset = i * -30; const yOffset = i * 20; const xOffset = Math.sin(i) * 25;
-                addPlatform(4000 + xOffset, yOffset, zOffset, 12, 2, 12, MATS.stage5, MATS.stage5_neon);
-                if (i % 3 === 0) buildItemBox(4000 + xOffset, yOffset + 3, zOffset);
-            }
-            const finishY = 220; const finishZ = -340;
-            addPlatform(4000, finishY, finishZ, 60, 4, 60, MATS.stage5, MATS.stage5_neon, "finish");
-            const finishRing = new THREE.Mesh(new THREE.TorusGeometry(20, 3, 16, 64), MATS.stage5_neon); finishRing.position.set(4000, finishY + 20, finishZ); scene.add(finishRing);
+            addPlatform(0, 0, -40, 15, 2, 15, MATS.stage1, MATS.stage1_neon);
+            addPlatform(-20, 5, -60, 15, 2, 15, MATS.stage1, MATS.stage1_neon); buildItemBox(-20, 8, -60);
+            
+            addPlatform(20, 10, -80, 15, 2, 15, MATS.stage1, MATS.stage1_neon);
+            
+            addPlatform(0, 15, -120, 25, 2, 25, MATS.stage1, MATS.stage1_neon);
+            buildLaserHazard(0, 17, -120, 12, 0.02);
+            buildItemBox(-8, 18, -120); buildItemBox(8, 18, -120);
+            
+            // Replaced Portal with Finish Line to complete the race on Stage 1
+            const finishY = 15; const finishZ = -180;
+            addPlatform(0, finishY, finishZ, 60, 4, 60, MATS.stage5, MATS.stage5_neon, "finish");
+            const finishRing = new THREE.Mesh(new THREE.TorusGeometry(20, 3, 16, 64), MATS.stage5_neon); 
+            finishRing.position.set(0, finishY + 20, finishZ); scene.add(finishRing);
         }
         buildLevels();
 
@@ -557,7 +552,8 @@
         }
 
         function updateItemUI() {
-            document.getElementById('item-slot').innerText = ITEM_EMOJIS[currentItem];
+            const el = document.getElementById('item-slot');
+            if (el) el.innerText = ITEM_EMOJIS[currentItem];
             if(localPlayer) {
                 localPlayer.droneItem.visible = currentItem !== ITEMS.NONE;
                 if(currentItem === ITEMS.BOOST) localPlayer.droneItem.material.color.setHex(0xffaa00);
@@ -597,7 +593,11 @@
         }
 
         function applyStun() { isStunned = true; stunTimer = 2000; velocity.y = 1.5; velocity.x = 0; velocity.z = 0; showFloatingText("STUNNED!", playerGrp.position, "#ff0000"); }
-        function applyFreeze() { isFrozen = true; freezeTimer = 3000; velocity.set(0,0,0); localPlayer.iceBlock.visible = true; document.getElementById('freeze-overlay').style.display = 'block'; showFloatingText("FROZEN!", playerGrp.position, "#00ffff"); }
+        function applyFreeze() { 
+            isFrozen = true; freezeTimer = 3000; velocity.set(0,0,0); localPlayer.iceBlock.visible = true; 
+            const overlay = document.getElementById('freeze-overlay'); if (overlay) overlay.style.display = 'block'; 
+            showFloatingText("FROZEN!", playerGrp.position, "#00ffff"); 
+        }
 
         // =========================================================
         // 7. FIREBASE SYNC & MULTIPLAYER
@@ -622,9 +622,9 @@
                         if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
                         showFloatingText("GO!", playerGrp.position, "#d946ef");
                     } else if (data.cmd === 'reset') {
-                        raceStarted = false; raceFinished = false; document.getElementById('timer').innerText = "WAITING";
+                        raceStarted = false; raceFinished = false; const timerEl = document.getElementById('timer'); if(timerEl) timerEl.innerText = "WAITING";
                         currentStage = 1; respawnPoint.set(0, 10, 0); dieAndRespawn("ADMIN RESET");
-                        leaderboard = []; updateLeaderboardUI(); document.getElementById('race-message').style.display = 'none';
+                        leaderboard = []; updateLeaderboardUI(); const msgEl = document.getElementById('race-message'); if (msgEl) msgEl.style.display = 'none';
                         if (!startBarrier) { startBarrier = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), MATS.barrier); startBarrier.position.set(0, 15, -20); scene.add(startBarrier); }
                     }
                 }
@@ -706,18 +706,17 @@
             
             roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
             
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('loading-menu').style.display = 'block';
+            const lm = document.getElementById('loading-menu'); if(lm) lm.style.display = 'block';
             await initFirebase();
             
             isHost = true; setupMultiplayerListeners();
 
-            document.getElementById('loading-menu').style.display = 'none';
-            document.getElementById('host-menu').style.display = 'block';
-            document.getElementById('display-code').innerText = roomCode;
-            document.getElementById('display-link').innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
-            document.getElementById('hud-code-display').innerText = roomCode;
-            document.getElementById('host-panel').style.display = 'block'; 
+            const hm = document.getElementById('host-menu'); if(hm) hm.style.display = 'block';
+            const dcode = document.getElementById('display-code'); if(dcode) dcode.innerText = roomCode;
+            const dlink = document.getElementById('display-link'); if(dlink) dlink.innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
+            const hudcode = document.getElementById('hud-code-display'); if(hudcode) hudcode.innerText = roomCode;
+            const hp = document.getElementById('host-panel'); if(hp) hp.style.display = 'block'; 
+            const cb = document.getElementById('chat-lobby-box'); if(cb) cb.style.display = 'flex';
             
             enterGame();
             appendChat("System", "Room Created. Waiting for players...", "#94a3b8");
@@ -733,19 +732,19 @@
             
             code = code.toUpperCase(); roomCode = code;
             
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('loading-menu').style.display = 'block';
-            document.getElementById('loading-text').innerText = `JOINING ${code}...`;
+            const lm = document.getElementById('loading-menu'); if(lm) lm.style.display = 'block';
+            const lt = document.getElementById('loading-text'); if(lt) lt.innerText = `JOINING ${code}...`;
             
             await initFirebase();
             isHost = false; setupMultiplayerListeners();
 
-            document.getElementById('loading-menu').style.display = 'none';
-            document.getElementById('host-menu').style.display = 'block';
-            document.getElementById('display-code').innerText = roomCode;
-            document.getElementById('display-link').innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
-            document.getElementById('hud-code-display').innerText = roomCode;
-            document.getElementById('host-panel').style.display = 'none'; 
+            const hm = document.getElementById('host-menu'); if(hm) hm.style.display = 'block';
+            const dcode = document.getElementById('display-code'); if(dcode) dcode.innerText = roomCode;
+            const dlink = document.getElementById('display-link'); if(dlink) dlink.innerText = window.location.href.split('?')[0] + "?room=" + roomCode;
+            const hudcode = document.getElementById('hud-code-display'); if(hudcode) hudcode.innerText = roomCode;
+            const hp = document.getElementById('host-panel'); if(hp) hp.style.display = 'none'; 
+            const cb = document.getElementById('chat-lobby-box'); if(cb) cb.style.display = 'flex';
+            const bs = document.getElementById('btn-start'); if(bs) bs.style.display = 'none'; 
             
             enterGame();
             appendChat("System", "Connected to Room! Waiting for host to start.", "#94a3b8");
@@ -758,9 +757,17 @@
             appendChat(myName, val, "#" + myAvatarColor.toString(16).padStart(6,'0'));
             syncEvent('chat', { text: val });
             inputEl.value = "";
-            if (inputId === 'ig-chat-input') { window.isTyping = false; document.getElementById('ig-chat-input-container').style.display = 'none'; }
+            if (inputId === 'ig-chat-input') { 
+                window.isTyping = false; 
+                const cont = document.getElementById('ig-chat-input-container');
+                if(cont) cont.style.display = 'none'; 
+            }
         }
         
+        const btnSendChat = document.getElementById('btn-send-chat');
+        if(btnSendChat) btnSendChat.addEventListener('click', () => sendChatFromInput('chat-input'));
+        const chatInput = document.getElementById('chat-input');
+        if(chatInput) chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendChatFromInput('chat-input'); });
         const igChatInput = document.getElementById('ig-chat-input');
         if(igChatInput) igChatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendChatFromInput('ig-chat-input'); });
         
@@ -770,7 +777,7 @@
             const boxIG = document.getElementById('ig-chat-messages'); if(boxIG) { boxIG.innerHTML += html; boxIG.scrollTop = boxIG.scrollHeight; }
         }
 
-        function updatePlayersUI() { document.getElementById('player-count').innerText = remotePlayers.size + 1; }
+        function updatePlayersUI() { const pc = document.getElementById('player-count'); if(pc) pc.innerText = remotePlayers.size + 1; }
         function formatTime(ms) { const m = Math.floor(ms/60000); const s = Math.floor((ms%60000)/1000); const c = Math.floor((ms%1000)/10); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}.${c.toString().padStart(2,'0')}`; }
 
         function updateLeaderboard(id, nameStr, timeMs) {
@@ -780,7 +787,8 @@
             }
         }
         function updateLeaderboardUI() {
-            const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
+            const list = document.getElementById('leaderboard-list'); if(!list) return;
+            list.innerHTML = "";
             if (leaderboard.length === 0) list.innerHTML = `<div class="leaderboard-entry" style="color:#64748b;">Waiting...</div>`;
             leaderboard.forEach((e, i) => {
                 const el = document.createElement('div'); el.className = 'leaderboard-entry';
@@ -795,7 +803,8 @@
             let racers = [{ id: myId, name: "YOU", z: playerGrp.position.z }];
             remotePlayers.forEach((p, id) => racers.push({ id, name: p.name, z: p.progressZ || 0 }));
             racers.sort((a,b) => a.z - b.z);
-            const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
+            const list = document.getElementById('leaderboard-list'); if(!list) return;
+            list.innerHTML = "";
             racers.slice(0,5).forEach((e, i) => {
                 const el = document.createElement('div'); el.className = 'leaderboard-entry';
                 if (e.id === myId) el.style.color = '#d946ef';
@@ -804,26 +813,38 @@
             });
         }
 
-        document.getElementById('btn-create').addEventListener('click', hostRoom);
-        document.getElementById('btn-join').addEventListener('click', () => { const code = document.getElementById('join-input').value.trim(); if(code) joinRoom(code); });
+        const btnCreate = document.getElementById('btn-create'); if(btnCreate) btnCreate.addEventListener('click', hostRoom);
+        const btnJoin = document.getElementById('btn-join'); if(btnJoin) btnJoin.addEventListener('click', () => { const code = document.getElementById('join-input'); if(code && code.value.trim()) joinRoom(code.value.trim()); });
+        const btnCopy = document.getElementById('btn-copy'); if(btnCopy) btnCopy.addEventListener('click', () => { const link = document.getElementById('display-link'); if(link) navigator.clipboard.writeText(link.innerText); });
         
-        document.getElementById('admin-start').addEventListener('click', () => {
+        const btnStart = document.getElementById('btn-start');
+        if(btnStart) btnStart.addEventListener('click', () => {
+            if(raceStarted) return;
+            raceStarted = true; raceFinished = false; startTime = Date.now();
+            enterGame();
+            if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
+            showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
+            sendHostCommand('start', { startTime: startTime });
+        });
+
+        const btnAdminStart = document.getElementById('admin-start');
+        if(btnAdminStart) btnAdminStart.addEventListener('click', () => {
             if(raceStarted) return;
             raceStarted = true; raceFinished = false; startTime = Date.now();
             if (startBarrier) { scene.remove(startBarrier); startBarrier = null; }
             showFloatingText("RACE STARTED!", playerGrp.position, "#39ff14");
             sendHostCommand('start', { startTime: startTime });
         });
-
-        document.getElementById('admin-reset').addEventListener('click', () => { sendHostCommand('reset'); });
+        const btnAdminReset = document.getElementById('admin-reset');
+        if(btnAdminReset) btnAdminReset.addEventListener('click', () => { sendHostCommand('reset'); });
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('room')) joinRoom(urlParams.get('room'));
 
         function enterGame() {
             if (window.gameActive) return; window.gameActive = true;
-            document.getElementById('lobby').style.display = 'none'; 
-            document.getElementById('ui-container').style.display = 'block';
+            const lobby = document.getElementById('lobby'); if(lobby) lobby.style.display = 'none'; 
+            const uiContainer = document.getElementById('ui-container'); if(uiContainer) uiContainer.style.display = 'block';
             
             localPlayer = createAvatar(myAvatarColor, myAvatarClass, myName, myAccessoryId); scene.add(localPlayer.group); playerGrp = localPlayer.group;
             
@@ -834,7 +855,7 @@
         }
 
         // =========================================================
-        // 9. CORE GAME LOOP, CAMERA, & PHYSICS
+        // 10. CORE GAME LOOP, CAMERA, & PHYSICS
         // =========================================================
         const keys = {}; 
         window.addEventListener('keydown', e => { 
@@ -870,7 +891,7 @@
             if(!playerGrp) return;
             playerGrp.position.copy(respawnPoint); velocity.set(0,0,0);
             isFrozen = false; isStunned = false; hasBoost = false; sprintStamina = MAX_SPRINT;
-            localPlayer.iceBlock.visible = false; document.getElementById('freeze-overlay').style.display='none';
+            localPlayer.iceBlock.visible = false; const fO = document.getElementById('freeze-overlay'); if(fO) fO.style.display='none';
             showFloatingText(msg, playerGrp.position, "#ef4444");
         }
 
@@ -901,12 +922,12 @@
 
             if(!playerGrp || !localPlayer) return; 
 
-            if (raceStarted && !raceFinished) { document.getElementById('timer').innerText = formatTime(time - startTime); if(time % 30 === 0) updateLiveRanks(); }
-            document.getElementById('stage-indicator').innerText = `STAGE ${currentStage} / 5`;
+            if (raceStarted && !raceFinished) { const tEl = document.getElementById('timer'); if(tEl) tEl.innerText = formatTime(time - startTime); if(time % 30 === 0) updateLiveRanks(); }
+            const sInd = document.getElementById('stage-indicator'); if(sInd) sInd.innerText = `STAGE ${currentStage} / 1`;
             
             if (boostTimer > 0) { boostTimer -= 16; if(boostTimer <= 0) hasBoost = false; }
             if (stunTimer > 0) { stunTimer -= 16; if(stunTimer <= 0) isStunned = false; }
-            if (freezeTimer > 0) { freezeTimer -= 16; if(freezeTimer <= 0) { isFrozen = false; localPlayer.iceBlock.visible = false; document.getElementById('freeze-overlay').style.display='none'; } }
+            if (freezeTimer > 0) { freezeTimer -= 16; if(freezeTimer <= 0) { isFrozen = false; localPlayer.iceBlock.visible = false; const fo = document.getElementById('freeze-overlay'); if(fo) fo.style.display='none'; } }
 
             const isSprinting = (keys['ShiftLeft'] || keys['ShiftRight']) && sprintStamina > 0 && isGrounded && !window.isTyping;
             if (isSprinting) sprintStamina = Math.max(0, sprintStamina - SPRINT_DRAIN);
@@ -1022,15 +1043,9 @@
 
             if (stoodOn) {
                 if (stoodOn.type === 'lava') dieAndRespawn("INCINERATED!");
-                else if (stoodOn.type === 'conveyor' && stoodOn.convZ) playerGrp.position.z += stoodOn.convZ;
-                else if (stoodOn.type === 'check') {
-                    const checkPos = new THREE.Vector3(stoodOn.mesh.position.x, stoodOn.mesh.position.y + 5, stoodOn.mesh.position.z);
-                    if (respawnPoint.distanceTo(checkPos) > 1) { respawnPoint.copy(checkPos); showFloatingText("CHECKPOINT!", playerGrp.position, "#39ff14"); }
-                }
                 else if (stoodOn.type === 'finish' && raceStarted && !raceFinished) {
                     raceFinished = true; finishedTimeMs = time - startTime;
-                    document.getElementById('race-message').innerText = `FINISHED!\n${formatTime(finishedTimeMs)}`;
-                    document.getElementById('race-message').style.display = 'block';
+                    const rm = document.getElementById('race-message'); if(rm) { rm.innerText = `FINISHED!\n${formatTime(finishedTimeMs)}`; rm.style.display = 'block'; }
                     updateLeaderboard(myId, myName, finishedTimeMs); syncEvent('finish', { time: finishedTimeMs });
                 }
             }
@@ -1043,12 +1058,6 @@
                             b.active = false; b.inner.visible = false; b.outer.visible = false; b.respawnTimer = time + 5000;
                             showFloatingText("+ ITEM", playerGrp.position, "#fff"); break;
                         }
-                    }
-                }
-                for (let pt of portals) {
-                    if (playerGrp.position.distanceTo(pt.mesh.position) < 4) {
-                        currentStage = pt.targetStage; respawnPoint.copy(pt.targetPos); playerGrp.position.copy(respawnPoint); velocity.set(0,0,0);
-                        camYaw = 0; camPitch = 0.2; showFloatingText(`STAGE ${currentStage}!`, playerGrp.position, "#00ffff"); break;
                     }
                 }
             }
